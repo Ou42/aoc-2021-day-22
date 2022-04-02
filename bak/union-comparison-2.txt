@@ -1,0 +1,95 @@
+union of first 10 cuboids from AoC 2021 Day 22
+blender:    vol = 547647.0766 mm^3
+my solveA:  vol = 547647
+my solveB WIP:
+            vol = 552507
+  where:
+    > vol $ map snd ndg
+    > d <- readFile i3          -- i3.txt = first 10 power steps (aka cuboids)
+    > as = allSteps d           -- [('+',[(-32,18),(-49,-2),(-43,3)]), ... ]
+    > ndg = newDiffGrps as      
+                                -- newDiffGrps recursively splits cuboids
+                                -- ... taking the difference of 2 at a time
+                                -- [('+',[(-22,27),(-46,-2),(-12,37)]), ... ]
+
+-----
+552507 - 547647 = 4860
+-----
+
+> map (vol . (:[]) . snd) ndg
+[112500,24192,3024,3384,46436,408,13464,1848,1156,1700,49500,6992,1134,3078,1650,9126,3575,13662,6003,11286,6050,11880,285,5244,342,4968,990,2340,1656,2640,315,68,57,2052,10127,3380,9568,15,1120,456,1519,520,637,108,676,588,3072,2688,1664,384,1456,420,768,2448,576,1872,416,2340,312,360,144,720,1056,3936,1872,86,318,10176,96,288,160,2720,5270,4794,550,3689,987,9400,105750]
+
+-----
+
+> solveA $ unlines $ take 2 $ lines d
+231540
+> vol $ map snd $ newDiffGrps $ take 2 as
+231540
+
+> fa i = solveA $ unlines $ take i $ lines d
+> fb i = vol $ map snd $ newDiffGrps $ take i as
+
+> map (\i -> fa i == fb i) [1..10]
+[True,True,True,True,True,True,False,False,False,False]
+
+> fa 6 == fb 6 -- True      > fa 6 -- 429183    > fa 7 -- 477877
+> fa 7 == fb 7 -- False     > fb 6 -- 429183    > fb 7 -- 480397
+
+> fb 7 - fa 7  -- 2520
+
+==============================
+
+> d <- readFile i3
+> as = allSteps d
+> sb i = newDiffGrps $ take i as
+> sb6 = sb 6
+
+> sb6
+[('+',[(-15,21),(0,9),(-35,-28)]), ... ]
+
+> sb6 !! 0
+('+',[(-15,21),(0,9),(-35,-28)])
+> head ((init (tails sb6)) !! 0)
+('+',[(-15,21),(0,9),(-35,-28)])
+
+*Main Data.List> zipWith (==) sb6 $ map (head) $ init $ tails sb6
+[True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+
+*Main Data.List> map (\(hPwrStep:tPwrSteps) -> iFree hPwrStep tPwrSteps) $ init $ tails sb6
+[True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+
+> cu7 = last $ take 7 as
+> sb7temp = sb6 ++ [cu7]
+
+> iF7 = map (\(hPwrStep:tPwrSteps) -> iFree hPwrStep tPwrSteps) $ init $ tails sb7temp
+*Main Data.List> iF7
+[False,False,False,False,True,True,True,False,True,True,True,False,True,False,True,True,True,True,True,True,True,True,True,True,True,True,True,False,True,False,False,False,True,True,True,True,False,True]
+
+======
+
+2 BIG refactors of newDiffGrps! OK OK one tiny one HUGE refactor
+tiny refactor:
+  . got rid of nested helper funcs
+  . got rid of the nested where
+  . got rid of sending in tail & head as args
+  . got rid of storing psDone. jsut prepend it to the list and recurse!
+  . got rid of the (h:t) destructuring, but then put it back in later
+HUGE refactor
+  . got rid of nested go function
+  . reimplemented (h:t) destructuring
+  . pushed the (h:t) to the function invocation(?) w/ the '@' feature
+  
+*** AND *** I *** BROKE IT FURTHER!!! ***
+
+> sa i = unlines $ take i $ lines d
+
+> solveA $ sa 1             -- 115056
+> vol $ map snd $ sb 1      -- 115056
+> solveA $ sa 2             -- 231540
+> vol $ map snd $ sb 2      -- 231540
+> solveA $ sa 3             -- 321769
+> vol $ map snd $ sb 3      -- 335224
+
+            1       2       3
+solveA      115056  231540  321769
+"slvB"      115056  231540  335224

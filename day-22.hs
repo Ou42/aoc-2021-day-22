@@ -248,7 +248,11 @@ getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
-newDiffGrps pwrStepLst = go (tail pwrStepLst) (head pwrStepLst) -- go t h
+-- newDiffGrps pwrStepLst = go (tail pwrStepLst) (head pwrStepLst) -- go t h
+newDiffGrps []    = error "EMPTY!! Power Step List!"
+newDiffGrps [psA] = [psA]
+newDiffGrps pwrStepLst@(psA:psRest) =
+  let diff psA' psRest' = difference psA' (head $ culprits psA' psRest')
   -- given a list of steps: pwrStepLst
   -- take head & tail:      (h:t) = pwrStepLst
   -- [SKIP] compare head to head of tail <== previous idea
@@ -260,18 +264,12 @@ newDiffGrps pwrStepLst = go (tail pwrStepLst) (head pwrStepLst) -- go t h
      --   else, split h with head of culprits
      --         then start over
      -- when done, append last 'pwrStep5 a'
-  where
-    -- (h:t)                   = pwrStepLst
-    diff psA' psRest' = difference psA' (head $ culprits psA' psRest')
-    go [] psA     = [psA]
-    go psRest psA =
-      -- (accu ++ [difference psA psB], psB)
+  in
       if iFree psA psRest
-        then psA : go (if null psRest then error "two" else tail psRest) (head psRest)
+        then psA : newDiffGrps psRest
         else if null (diff psA psRest)
-               then go (tail psRest) (head psRest)
-               else go (tail (diff psA psRest) ++ psRest) (head (diff psA psRest))
-
+               then newDiffGrps psRest
+               else newDiffGrps (diff psA psRest) ++ psRest
 
 -- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 

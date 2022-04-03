@@ -248,7 +248,7 @@ getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
-newDiffGrps pwrStepLst = go ([],t) h
+newDiffGrps pwrStepLst = go (tail pwrStepLst) (head pwrStepLst) -- go t h
   -- given a list of steps: pwrStepLst
   -- take head & tail:      (h:t) = pwrStepLst
   -- [SKIP] compare head to head of tail <== previous idea
@@ -261,17 +261,16 @@ newDiffGrps pwrStepLst = go ([],t) h
      --         then start over
      -- when done, append last 'pwrStep5 a'
   where
-    (h:t)                   = pwrStepLst
+    -- (h:t)                   = pwrStepLst
     diff psA' psRest' = difference psA' (head $ culprits psA' psRest')
-    go (psDone, []) psA     = psDone ++ [psA]
-    go (psDone, psRest) psA =
+    go [] psA     = [psA]
+    go psRest psA =
       -- (accu ++ [difference psA psB], psB)
       if iFree psA psRest
-        then go (psA:psDone, if null psRest then error "two" else tail psRest) (head psRest)
-        -- else error $ "not yet! psRest = " ++ unlines (map show psRest)
+        then psA : go (if null psRest then error "two" else tail psRest) (head psRest)
         else if null (diff psA psRest)
-               then go (psDone, tail psRest) (head psRest)
-               else go (psDone, tail (diff psA psRest) ++ psRest) (head (diff psA psRest))
+               then go (tail psRest) (head psRest)
+               else go (tail (diff psA psRest) ++ psRest) (head (diff psA psRest))
 
 
 -- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"

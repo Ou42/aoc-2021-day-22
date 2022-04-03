@@ -262,15 +262,21 @@ newDiffGrps pwrStepLst = go ([],t) h
      -- when done, append last 'pwrStep5 a'
   where
     (h:t)                   = pwrStepLst
+    diff psA' psRest' = difference psA' (head $ culprits psA' psRest')
     go (psDone, []) psA     = psDone ++ [psA]
     go (psDone, psRest) psA =
       -- (accu ++ [difference psA psB], psB)
       if iFree psA psRest
         then go (psA:psDone, if null psRest then error "two" else tail psRest) (head psRest)
         -- else error $ "not yet! psRest = " ++ unlines (map show psRest)
-        else if null diff
+        else if null (diff psA psRest)
                then go (psDone, tail psRest) (head psRest)
-               else go (psDone, tail diff ++ psRest) (head diff)
+               else go (psDone, tail (diff psA psRest) ++ psRest) (head (diff psA psRest))
+
+
+-- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
+
+{-
           where
             -- td = if null diff then [] else tail diff
             -- td = if null diff
@@ -282,9 +288,7 @@ newDiffGrps pwrStepLst = go ([],t) h
             -- fstCulprit :: PwrStep5 a -> [PwrStep5 a] -> PwrStep5 a
             -- fstCulprit = head $ culprits -- psA psRest 
             fstCulprit ps psLst = head $ culprits ps psLst -- psA psRest 
-
--- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
-
+-}
 
 
 -- solveBv2 :: [Char] -> 
@@ -437,12 +441,13 @@ vol = sum . map (product . map (\(mn,mx) -> abs(mx-mn)+1))
 -- verts :: [[String]] -> String
 -- verts d = putStrLn $ (++) "\nv " $ concat $ intercalate ["\nv "] $ (map (intersperse " ") d
 verts d =
-  -- (++) "\nv "
-  -- $ concat $ intercalate ["\nv "]
+  {- -- (++) "\nv "
+     -- $ concat $ intercalate ["\nv "]
       -- $ map (intersperse " " . map show . lst2Tup2Lst3 . snd)
       -- $ map ( (intersperse " ") . lst2Tup2Lst3 . snd) $ allSteps d
       -- id
       -- $ map ( lst2Tup2Lst3 . snd ) $ allSteps d
+  -}
   putStrLn
   $
   unlines $ map show $ concat $ (map . map) concat

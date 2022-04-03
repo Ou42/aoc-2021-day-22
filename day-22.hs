@@ -248,11 +248,7 @@ getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
--- newDiffGrps pwrStepLst = go (tail pwrStepLst) (head pwrStepLst) -- go t h
-newDiffGrps []    = error "EMPTY!! Power Step List!"
-newDiffGrps [psA] = [psA]
-newDiffGrps pwrStepLst@(psA:psRest) =
-  let diff psA' psRest' = difference psA' (head $ culprits psA' psRest')
+newDiffGrps pwrStepLst = go ([],t) h
   -- given a list of steps: pwrStepLst
   -- take head & tail:      (h:t) = pwrStepLst
   -- [SKIP] compare head to head of tail <== previous idea
@@ -264,20 +260,17 @@ newDiffGrps pwrStepLst@(psA:psRest) =
      --   else, split h with head of culprits
      --         then start over
      -- when done, append last 'pwrStep5 a'
-  in
+  where
+    (h:t)                   = pwrStepLst
+    go (psDone, []) psA     = psDone ++ [psA]
+    go (psDone, psRest) psA =
+      -- (accu ++ [difference psA psB], psB)
       if iFree psA psRest
-        then psA : newDiffGrps psRest
-        else if null (diff psA psRest) -- now this check seems unnecessary!
-               then newDiffGrps psRest
---               else newDiffGrps (diff psA psRest) ++ psRest
---                -- OR?! --
-              --  else newDiffGrps ((diff psA psRest) ++ psRest)
-               -- hlint suggested removing: Redundant bracket
-               else newDiffGrps (diff psA psRest ++ psRest)
-
--- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
-
-{-
+        then go (psA:psDone, if null psRest then error "two" else tail psRest) (head psRest)
+        -- else error $ "not yet! psRest = " ++ unlines (map show psRest)
+        else if null diff
+               then go (psDone, tail psRest) (head psRest)
+               else go (psDone, tail diff ++ psRest) (head diff)
           where
             -- td = if null diff then [] else tail diff
             -- td = if null diff
@@ -289,7 +282,9 @@ newDiffGrps pwrStepLst@(psA:psRest) =
             -- fstCulprit :: PwrStep5 a -> [PwrStep5 a] -> PwrStep5 a
             -- fstCulprit = head $ culprits -- psA psRest 
             fstCulprit ps psLst = head $ culprits ps psLst -- psA psRest 
--}
+
+-- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
+
 
 
 -- solveBv2 :: [Char] -> 
@@ -442,13 +437,12 @@ vol = sum . map (product . map (\(mn,mx) -> abs(mx-mn)+1))
 -- verts :: [[String]] -> String
 -- verts d = putStrLn $ (++) "\nv " $ concat $ intercalate ["\nv "] $ (map (intersperse " ") d
 verts d =
-  {- -- (++) "\nv "
-     -- $ concat $ intercalate ["\nv "]
+  -- (++) "\nv "
+  -- $ concat $ intercalate ["\nv "]
       -- $ map (intersperse " " . map show . lst2Tup2Lst3 . snd)
       -- $ map ( (intersperse " ") . lst2Tup2Lst3 . snd) $ allSteps d
       -- id
       -- $ map ( lst2Tup2Lst3 . snd ) $ allSteps d
-  -}
   putStrLn
   $
   unlines $ map show $ concat $ (map . map) concat

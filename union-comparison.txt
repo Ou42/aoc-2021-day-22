@@ -132,3 +132,10 @@ solveA      477877  505133  529947  547647
 [('+',[(-15,35),(-31,16),(-9,43)]),('+',[(3,49),(-29,15),(-45,4)])]
 
 -- THE BUG IS: cubA's Y's are both OUTSIDE/SURROUNDING cubB's Y's
+
+===> and, FIXED:
+
+vol $ map snd $ newDiffGrps intersects3 $ allSteps d
+547647
+
+This EQUALS solveA's result!

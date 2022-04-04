@@ -220,8 +220,9 @@ iFree :: Foldable t1 => (t2 -> a -> Bool) -> t2 -> t1 a -> Bool
 iFree intersectFunc cuA cuLst = not $ any ((== True) . intersectFunc cuA) cuLst
 -- iFree _ _ = error "List of cuboids empty?! or length 1?!"
 
-culprits :: (Num a, Ord a) => PwrStep5 a -> [PwrStep5 a] -> [PwrStep5 a]
-culprits pwrStepA = filter (intersects pwrStepA)
+-- culprits :: (Num a, Ord a) => PwrStep5 a -> [PwrStep5 a] -> [PwrStep5 a]
+culprits :: (t -> a -> Bool) -> t -> [a] -> [a]
+culprits intersectFunc pwrStepA = filter (intersectFunc pwrStepA)
 
 getDiffGrps (h:t) =
   fst
@@ -233,34 +234,39 @@ goDiffs :: (Enum a, Ord a, Num a) => [(Char, [Rng a])] -> [(Char, [Rng a])]
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 {-
-  * -- newDiffGrps:
-  * -- given a list of steps: pwrStepLst
+  * -- newDiffGrps: -- this is really a UNION of PwrSteps
+  * -- given:
+  * --        an intersecion function
+  * --        & a list of steps: pwrStepLst -- should ALL be same on/off
   * -- take head & tail:      (h:t) = pwrStepLst
-  * -- [SKIP] compare head to head of tail <== previous idea
   * -- take head and check if iFree ( intesects anything )
-  *      -- is h iFree? ( no intersections ) save it, recurse on t
-  *      -- [SKIP] else, there are intersections... optimization: grab the culprits!
-  *      -- [SKIP]      and ... [WANT TO: recursively split until iFree]
-  *      -- but there's a simpler way:
-  *      --   else, split h with head of culprits
-  *      --         then start over
-  *      -- when done, append last 'pwrStep5 a'
+  *      -- is h iFree? ( no intersections ) Yes: save it, recurse on t
+  *      --   else, take difference of h with head of culprits
+  *      --         this makes a new list of PwrSteps
+  *      --         recurse on this prepended to remaining PwrSteps
   *
   *********************************************************************** -}
 
 -- newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
+-- newDiffGrps :: (Enum a, Ord a, Num a) => 
+--                         ((Char, [Rng a]) -> (Char, [Rng a]) -> Bool)
+--                         -> [(Char, [Rng a])] -> [(Char, [Rng a])]
 newDiffGrps :: (Enum a, Ord a, Num a) => 
-                        ((Char, [Rng a]) -> (Char, [Rng a]) -> Bool)
-                        -> [(Char, [Rng a])] -> [(Char, [Rng a])]
+                        (PwrStep5 a -> PwrStep5 a -> Bool)
+                        -> [PwrStep5 a]
+                        -> [PwrStep5 a]
 newDiffGrps _ []    = error "EMPTY!! Power Step List!"
 newDiffGrps _ [psA] = [psA]
 newDiffGrps intersectFunc pwrStepLst@(psA:psRest) =
-  let diff psA' psRest'
-        = difference intersectFunc psA' (head $ culprits psA' psRest')
+  let fstCulprit = (head $ culprits intersectFunc psA psRest)
+      diff       = difference intersectFunc psA fstCulprit
+      -- diff psA' psRest'
+        -- = difference intersectFunc psA' fstCulprit
   in
       if iFree intersectFunc psA psRest
         then psA : newDiffGrps intersectFunc psRest
-        else newDiffGrps intersectFunc (diff psA psRest ++ psRest)
+        else newDiffGrps intersectFunc (diff ++ psRest)
+        -- else newDiffGrps intersectFunc (diff psA psRest ++ psRest)
         -- else if null (diff psA psRest) -- now this check seems unnecessary!
         --        then newDiffGrps psRest
 --               else newDiffGrps (diff psA psRest) ++ psRest
@@ -569,6 +575,13 @@ intersects2 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
     go = all (==True) chkXYZ
     rngAB  = zip cuA cuB
     chkXYZ = [s1 `elem` [s2..e2] || e1 `elem` [s2..e2] | ((s1,e1),(s2,e2)) <- rngAB]
+
+intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
+  where
+    go = all (==True) chkXYZ
+    rngAB  = zip cuA cuB
+    chkXYZ = [  s1 `elem` [s2..e2] || e1 `elem` [s2..e2] 
+             || s2 `elem` [s1..e1] || e2 `elem` [s1..e1] | ((s1,e1),(s2,e2)) <- rngAB]
 
 {-  
     > d <- readFile inputTest

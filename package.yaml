@@ -36,6 +36,12 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2021-day22
+    # Following fixes bug flagged by
+    # https://stackoverflow.com/questions/67519851/multiple-files-use-the-same-module-name
+    when:
+    - condition: false
+      other-modules: Paths_aoc2021_day22
+
 
 tests:
   aoc2021-day22-test:

@@ -67,7 +67,7 @@ i3 = "i3.txt"
           > union2 cuboidA cuboidB ==
               List of cuboidA parts *NOT* including over-lap
                 ++ [cuboidB] unedited.
-          
+
 -}
 -- data PwrStep1 a b = (Num a, Num b) => (Char, [(a, b)], XYZ, LWH) deriving (Show, Ord)
 data PwrStep2 a = PwrStep { onOff::Char, dimsXYZ::[(a,a)], xyz::XYZ, lwh::LWH }
@@ -229,7 +229,7 @@ getDiffGrps (h:t) =
   $ foldl (\(accu,cuA) cuB -> (accu ++ [difference intersects cuA cuB],cuB)) ([],h) t
 getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 
--- goDiffs = concat getDiffGrps 
+-- goDiffs = concat getDiffGrps
 goDiffs :: (Enum a, Ord a, Num a) => [(Char, [Rng a])] -> [(Char, [Rng a])]
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
@@ -248,10 +248,10 @@ goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
   *********************************************************************** -}
 
 -- newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
--- newDiffGrps :: (Enum a, Ord a, Num a) => 
+-- newDiffGrps :: (Enum a, Ord a, Num a) =>
 --                         ((Char, [Rng a]) -> (Char, [Rng a]) -> Bool)
 --                         -> [(Char, [Rng a])] -> [(Char, [Rng a])]
-newDiffGrps :: (Enum a, Ord a, Num a) => 
+newDiffGrps :: (Enum a, Ord a, Num a) =>
                         (PwrStep5 a -> PwrStep5 a -> Bool)
                         -> [PwrStep5 a]
                         -> [PwrStep5 a]
@@ -298,12 +298,12 @@ vb2 i d = vol $ map snd $ sb2 i d
             fstCul = fstCulprit psA psRest
             diff   = difference psA fstCul
             -- fstCulprit :: PwrStep5 a -> [PwrStep5 a] -> PwrStep5 a
-            -- fstCulprit = head $ culprits -- psA psRest 
-            fstCulprit ps psLst = head $ culprits ps psLst -- psA psRest 
+            -- fstCulprit = head $ culprits -- psA psRest
+            fstCulprit ps psLst = head $ culprits ps psLst -- psA psRest
 -}
 
 
--- solveBv2 :: [Char] -> 
+-- solveBv2 :: [Char] ->
 solveBv2 fileData =
   let steps  = allSteps fileData
       groups = gb steps
@@ -580,10 +580,10 @@ intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
   where
     go = all (==True) chkXYZ
     rngAB  = zip cuA cuB
-    chkXYZ = [  s1 `elem` [s2..e2] || e1 `elem` [s2..e2] 
+    chkXYZ = [  s1 `elem` [s2..e2] || e1 `elem` [s2..e2]
              || s2 `elem` [s1..e1] || e2 `elem` [s1..e1] | ((s1,e1),(s2,e2)) <- rngAB]
 
-{-  
+{-
     > d <- readFile inputTest
     > lines d !! 0
     "on x=-20..26,y=-36..17,z=-47..7"
@@ -622,7 +622,7 @@ intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
 
     > map (\s -> read s :: Int) xRange
     [-20,26]
-    
+
     > putStrLn $ unlines $ map (show) $ [(x,y,z) | x<-[10..12],y<-[10..12],z<-[10..12]]
     output is the 27 (x,y,z) cubes
 

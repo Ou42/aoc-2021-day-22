@@ -7,7 +7,7 @@ my solveB WIP:
     > vol $ map snd ndg
     > d <- readFile i3          -- i3.txt = first 10 power steps (aka cuboids)
     > as = allSteps d           -- [('+',[(-32,18),(-49,-2),(-43,3)]), ... ]
-    > ndg = newDiffGrps as      
+    > ndg = newDiffGrps as
                                 -- newDiffGrps recursively splits cuboids
                                 -- ... taking the difference of 2 at a time
                                 -- [('+',[(-22,27),(-46,-2),(-12,37)]), ... ]
@@ -78,7 +78,7 @@ HUGE refactor
   . got rid of nested go function
   . reimplemented (h:t) destructuring
   . pushed the (h:t) to the function invocation(?) w/ the '@' feature
-  
+
 *** AND *** I *** BROKE IT FURTHER!!! ***
 
 | FIXED "breakaged" introduced during refactoring:
@@ -97,12 +97,12 @@ HUGE refactor
 > map (solveA . sa) [1..10]
 > map vb [1..10]
 
-            1       2       3       4       5       6      
-solveA      115056  231540  321769  376667  402927  429183 
+            1       2       3       4       5       6
+solveA      115056  231540  321769  376667  402927  429183
 "slvB" (vb) 115056  231540  321769  376667  402927  429183
-           
+
 solvers diverge on Power Step 7 ...
-            7       8       9       10 
+            7       8       9       10
 solveA      477877  505133  529947  547647
 "slvB" (vb) 480397  507653  532467  552507
 

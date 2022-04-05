@@ -32,8 +32,10 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , ghc >=8.10.0 && <9.0
     , hspec
+    , split
   default-language: Haskell2010
 
 executable aoc2021-day22-exe
@@ -44,8 +46,10 @@ executable aoc2021-day22-exe
   build-depends:
       aoc2021-day22
     , base >=4.7 && <5
+    , containers
     , ghc >=8.10.0 && <9.0
     , hspec
+    , split
   default-language: Haskell2010
 
 test-suite aoc2021-day22-test
@@ -59,6 +63,8 @@ test-suite aoc2021-day22-test
   build-depends:
       aoc2021-day22
     , base >=4.7 && <5
+    , containers
     , ghc >=8.10.0 && <9.0
     , hspec
+    , split
   default-language: Haskell2010

@@ -1,3 +1,9 @@
+{-# LANGUAGE LambdaCase #-}
+-- {-# LANGUAGE RankNTypes #-}
+-- {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
+module Day22 where
+
 {-
     2022-03-22 -> 2022-04-01
     . Advent of Code - Day 22 - Puzzle 1 of 2
@@ -18,9 +24,6 @@
 
       Part B - forget the region. How many cubes are on?!!!
 -}
-{-# LANGUAGE LambdaCase #-}
--- {-# LANGUAGE RankNTypes #-}
--- {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 
 import Data.Bifunctor ( bimap )
 import Data.Char ( isDigit )
@@ -325,6 +328,10 @@ solveBv2 fileData =
         -- fstGrp
   in go fstGrp 0 -- fstGrp : go fstGrp 0
 
+solveBv3 fileData =
+  vol $ map snd
+      $ newDiffGrps intersects3 $ allSteps fileData
+
 newtype XYZ = XYZ (Int, Int, Int) deriving (Show)
 data LWH = LWH { xDim::Int, yDim::Int, zDim::Int } deriving (Show)
 
@@ -582,6 +589,16 @@ intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
     rngAB  = zip cuA cuB
     chkXYZ = [  s1 `elem` [s2..e2] || e1 `elem` [s2..e2]
              || s2 `elem` [s1..e1] || e2 `elem` [s1..e1] | ((s1,e1),(s2,e2)) <- rngAB]
+
+main :: IO ()
+main = do
+  d <- readFile i3
+  let sai3 = solveA d
+  putStrLn $ "solveA on (" ++ i3 ++ ") \t= " ++ show sai3
+
+  let sb3i3 = solveBv3 d
+  putStrLn $ "\"solveBv3\" on (" ++ i3 ++ ") \t= "
+    ++ show sb3i3
 
 {-
     > d <- readFile inputTest

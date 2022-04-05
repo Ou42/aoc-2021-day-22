@@ -7,7 +7,7 @@ my solveB WIP:
     > vol $ map snd ndg
     > d <- readFile i3          -- i3.txt = first 10 power steps (aka cuboids)
     > as = allSteps d           -- [('+',[(-32,18),(-49,-2),(-43,3)]), ... ]
-    > ndg = newDiffGrps as      
+    > ndg = newDiffGrps as
                                 -- newDiffGrps recursively splits cuboids
                                 -- ... taking the difference of 2 at a time
                                 -- [('+',[(-22,27),(-46,-2),(-12,37)]), ... ]
@@ -78,18 +78,64 @@ HUGE refactor
   . got rid of nested go function
   . reimplemented (h:t) destructuring
   . pushed the (h:t) to the function invocation(?) w/ the '@' feature
-  
+
 *** AND *** I *** BROKE IT FURTHER!!! ***
 
+| FIXED "breakaged" introduced during refactoring:
+|   else newDiffGrps (diff psA psRest) ++ psRest
+| should be:
+|   else newDiffGrps (diff psA psRest ++ psRest)
++----------------------------------------------------------
+
+
+> d <- readFile i3
+> as = allSteps d
 > sa i = unlines $ take i $ lines d
+> sb i = newDiffGrps $ take i as
+> vb i = vol $ map snd $ sb i
 
-> solveA $ sa 1             -- 115056
-> vol $ map snd $ sb 1      -- 115056
-> solveA $ sa 2             -- 231540
-> vol $ map snd $ sb 2      -- 231540
-> solveA $ sa 3             -- 321769
-> vol $ map snd $ sb 3      -- 335224
+> map (solveA . sa) [1..10]
+> map vb [1..10]
 
-            1       2       3
-solveA      115056  231540  321769
-"slvB"      115056  231540  335224
+            1       2       3       4       5       6
+solveA      115056  231540  321769  376667  402927  429183
+"slvB" (vb) 115056  231540  321769  376667  402927  429183
+
+solvers diverge on Power Step 7 ...
+            7       8       9       10
+solveA      477877  505133  529947  547647
+"slvB" (vb) 480397  507653  532467  552507
+
+> map (\(h:t) -> iFree h t) $ (init $ tails sb6)
+[True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+
+
+=====
+
+> ld = lines d
+> sa2 cu0 cu1 = solveA $ unlines $ [ld !! cu0] ++ [ld !! cu1]
+> sb2 cu0 cu1 = vol $ map snd $ newDiffGrps intersects $ [(allSteps d) !! cu0] ++ [(allSteps d) !! cu1]
+
+> pairs = [ (a,b) | a <-[0..9], b <-[0..9], a /= b]
+> map (\(cuA,cuB) -> (sa2 cuA cuB) == (sb2 cuA cuB)) pairs
+
+> map (\(cuA,cuB) -> (sa2 cuA cuB) == (sb2 cuA cuB)) pairs
+[True,True,True,True,True,True,True,True,True,True,True,True,True,True,False,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,False,True,True,True,True,True,True,True,True,True,True,True,True,True,True,False,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,False,True,True,True,True,True,True,True,False,True]
+
+> filter (\(cuA,cuB) -> (sa2 cuA cuB) /= (sb2 cuA cuB)) pairs
+[(1,6),(4,3),(6,0),(8,9),(9,7)]
+
+> sa2 1 6   214704
+> sb2 1 6   235494
+
+> newDiffGrps intersects $ [(allSteps d) !! 1] ++ [(allSteps d) !! 6]
+[('+',[(-15,35),(-31,16),(-9,43)]),('+',[(3,49),(-29,15),(-45,4)])]
+
+-- THE BUG IS: cubA's Y's are both OUTSIDE/SURROUNDING cubB's Y's
+
+===> and, FIXED:
+
+vol $ map snd $ newDiffGrps intersects3 $ allSteps d
+547647
+
+This EQUALS solveA's result!

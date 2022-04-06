@@ -25,17 +25,12 @@ module Day22 where
       Part B - forget the region. How many cubes are on?!!!
 -}
 
-import Data.Bifunctor ( bimap )
 import Data.Char ( isDigit )
 import Data.List ( sort, sortBy, groupBy, intersect, intersperse, intercalate )
--- import Data.List ( maximumBy, minimumBy, group, sort )
 import Data.Function (on)
--- import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, isNothing, maybe)
 import qualified Data.Set as S
 import Data.List.Split (chunksOf)
--- import Distribution.Compat.Lens (_1)
--- import GHC.RTS.Flags (GCFlags(ringBell))
 
 inputTest :: [Char]
 inputTest = "Day-22-INPUT-test.txt"
@@ -72,58 +67,31 @@ i3 = "i3.txt"
                 ++ [cuboidB] unedited.
 
 -}
--- data PwrStep1 a b = (Num a, Num b) => (Char, [(a, b)], XYZ, LWH) deriving (Show, Ord)
-data PwrStep2 a = PwrStep { onOff::Char, dimsXYZ::[(a,a)], xyz::XYZ, lwh::LWH }
 
--- mySort :: Ord b => [(a, b)] -> [(a, b)]
--- mySort = sortBy (flip compare `on` snd)
+newtype XYZ = XYZ (Int, Int, Int) deriving (Show)
+data LWH = LWH { xDim::Int, yDim::Int, zDim::Int } deriving (Show)
 
--- :: (Num a, Num b) => (Char, [(a, b)], XYZ, LWH)
--- ::  Num a         => (Char, [(a, a)], XYZ, LWH)
--- :: (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH)
-
--- 'PwrStep4 a' doesn't req {-# LANGUAGE RankNTypes #-}
 type Rng a      = (a,a)
+-- 'PwrStep4 a' doesn't req {-# LANGUAGE RankNTypes #-}
 type PwrStep4 a = (Char, [Rng a], XYZ, LWH)
 type PwrStep5 a = (Char, [Rng a])
 
--- type PwrStep3 a = (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH)
-  -- llegal qualified type:
-  --    (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH)
-  -- Perhaps you intended to use RankNTypesreq {-# LANGUAGE RankNTypes #-}
+-- toIntList = map (\x -> read x :: Int) . words
 
--- data HMM2 a :: (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH) -- Did you mean to enable PolyKinds?
-
--- sortBy (\(_,a) (_,b) -> compare (fst $ head a) (fst $ head b))
-
--- mySort :: (Num a, Ord a) => [PwrStep4 a] -> [PwrStep4 a]
 sortOnXmin :: (Num a, Ord a) => [PwrStep5 a] -> [PwrStep5 a]
 sortOnXmin = sortBy (compare `on` this) -- (flip compare ...) sorts in descending order
- where
-   this (_,here) = fst $ head here
-  --  this _ = error "Invalid Pattern Match!"
-  -- above req: {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+  where
+    this (_,here) = fst $ head here
 
 sortXYZs :: Ord a => Int -> [[(a,a)]] -> [[(a,a)]]
--- sortXYZs = sortBy (compare `on` (fst . head)) -- (flip compare ...) sorts in descending order
--- sortXYZs = sortBy (compare `on` (fst . (!! 1))) -- (flip compare ...) sorts in descending order
 sortXYZs 3   = error "Index == 3. Can't sort!"
 sortXYZs idx = sortBy (compare `on` (fst . (!! idx))) -- (flip compare ...) sorts in descending order
 
--- toIntList = map (\x -> read x :: Int) . words
-
--- bbox :: [(a, a)] -> [(a, a)] -> [(a, a)]
--- bbox = zipWith (min,max) -- nope
--- bbox = uncurry bimap (min, max) -- nope
 bbox :: Ord a => [(a, a)] -> [(a, a)] -> [(a, a)]
 bbox = zipWith hmm
   where
     hmm :: (Ord a) => (a, a) -> (a, a) -> (a, a)
     hmm (t0fst, t02nd) (t1fst, t1snd) = (min t0fst t1fst, max t02nd t1snd)
-    -- hmm t0 t1 = (min t0fst t1fst, max t02nd t1snd)
-    -- (t0fst,t02nd) (t1fst, t1snd) = t0 t1 -- nope
-    -- (t0fst, t02nd) = t0 -- nope
-    -- (t1fst, t1snd) = t1 -- nope
 
 insideBBox :: (Ord a, Enum a) => [(a, a)] -> [(a, a)] -> Bool
 insideBBox bbox rPrism =
@@ -169,7 +137,6 @@ keepPlusMinus50 (_,xyzRanges) = foldr inRange True xyzRanges
   where
     inRange (low, high) valid = low `elem` [-50..50] && high `elem` [-50..50] && valid
 
--- buildCubesList :: (Char, String) -> (Char, [(Int,Int)])
 buildCubesList :: Enum a1 => (a2, [(a1, a1)]) -> (a2, [[a1]])
 buildCubesList (f, s) = (f, cubesList)
   where
@@ -192,20 +159,6 @@ setify accuSet (cmd, cLst) = case cmd of
   '+' -> S.union accuSet (S.fromList cLst)
   '-' -> S.difference accuSet (S.fromList cLst)
   _   -> error "cmd /= on/off"
-  -- "on"  -> S.union accuSet (S.fromList cLst)
-  -- "off" -> S.difference accuSet (S.fromList cLst)
-  -- _     -> error "cmd /= on/off"
-
-
--- the following worked up until solveA returned pm50
--- da d = putStrLn $ unlines $ map show $ solveA d
-{-
-    ==============================
-      *** VERY NAIVE ATTEMPT ***
-    > solveB d
-    Killed
-    ==============================
--}
 
 -- doesn't finish. Linux "kills" it.
 solveBv1 :: [Char] -> Int
@@ -215,7 +168,6 @@ solveBv1 fileData =
       cubesLst = map buildCubesList steps
   in
       length $ foldl setify S.empty cubesLst
-
 
 -- iFree == intersection Free?
 -- iFree :: (Num a, Ord a) => PwrStep5 a -> [PwrStep5 a] -> Bool
@@ -237,7 +189,8 @@ goDiffs :: (Enum a, Ord a, Num a) => [(Char, [Rng a])] -> [(Char, [Rng a])]
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 {-
-  * -- newDiffGrps: -- this is really a UNION of PwrSteps
+  * -- unionOnGrp (previously newDiffGrps):
+  * --        a UNION of "on" ('+') PwrSteps
   * -- given:
   * --        an intersecion function
   * --        & a list of steps: pwrStepLst -- should ALL be same on/off
@@ -250,90 +203,44 @@ goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
   *
   *********************************************************************** -}
 
--- newDiffGrps :: (Num a, Ord a, Show a, Enum a) => [PwrStep5 a] -> [PwrStep5 a]
--- newDiffGrps :: (Enum a, Ord a, Num a) =>
---                         ((Char, [Rng a]) -> (Char, [Rng a]) -> Bool)
---                         -> [(Char, [Rng a])] -> [(Char, [Rng a])]
-newDiffGrps :: (Enum a, Ord a, Num a) =>
+unionOnGrp :: (Enum a, Ord a, Num a) =>
                         (PwrStep5 a -> PwrStep5 a -> Bool)
                         -> [PwrStep5 a]
                         -> [PwrStep5 a]
-newDiffGrps _ []    = error "EMPTY!! Power Step List!"
-newDiffGrps _ [psA] = [psA]
-newDiffGrps intersectFunc pwrStepLst@(psA:psRest) =
+unionOnGrp _ []    = error "EMPTY!! Power Step List!"
+unionOnGrp _ [psA] = [psA]
+unionOnGrp intersectFunc pwrStepLst@(psA:psRest) =
   let fstCulprit = (head $ culprits intersectFunc psA psRest)
       diff       = difference intersectFunc psA fstCulprit
-      -- diff psA' psRest'
-        -- = difference intersectFunc psA' fstCulprit
   in
       if iFree intersectFunc psA psRest
-        then psA : newDiffGrps intersectFunc psRest
-        else newDiffGrps intersectFunc (diff ++ psRest)
-        -- else newDiffGrps intersectFunc (diff psA psRest ++ psRest)
-        -- else if null (diff psA psRest) -- now this check seems unnecessary!
-        --        then newDiffGrps psRest
---               else newDiffGrps (diff psA psRest) ++ psRest
---                -- OR?! --
-              --  else newDiffGrps ((diff psA psRest) ++ psRest)
-               -- hlint suggested removing: Redundant bracket
-              --  else newDiffGrps (diff psA psRest ++ psRest)
+        then psA : unionOnGrp intersectFunc psRest
+        else unionOnGrp intersectFunc (diff ++ psRest)
 
--- newDiffGrps _ = error "List of cuboids empty?! or length 1?!"
+-- diffOnGrpVsOneOff :: (Enum a, Ord a, Num a) =>
+--                        [PwrStep5 a]
+--                        -> PwrStep5 a
+--                        -> [PwrStep5 a]
+diffOnGrpVsOneOff onGrp oneOff = -- error "???"
+  concatMap (flip (difference intersects3) $ oneOff) onGrp
 
 sa :: Int -> String -> String
 sa i d = unlines $ take i $ lines d
 sb1 :: Int -> String -> [PwrStep5 Int]
-sb1 i d = newDiffGrps intersects $ take i $ allSteps d
+sb1 i d = unionOnGrp intersects $ take i $ allSteps d
 vb1 :: Int -> String -> Int
 vb1 i d = vol $ map snd $ sb1 i d
-sb2 :: Int -> String -> [PwrStep5 Int]
-sb2 i d = newDiffGrps intersects2 $ take i $ allSteps d
-vb2 :: Int -> String -> Int
-vb2 i d = vol $ map snd $ sb2 i d
-
-{-
-          where
-            -- td = if null diff then [] else tail diff
-            -- td = if null diff
-            --        then
-            --          error $ "one:\npsA =\n" ++ show psA ++ "\npsRest =\n" ++ unlines (map show psRest)
-            --        else tail diff
-            fstCul = fstCulprit psA psRest
-            diff   = difference psA fstCul
-            -- fstCulprit :: PwrStep5 a -> [PwrStep5 a] -> PwrStep5 a
-            -- fstCulprit = head $ culprits -- psA psRest
-            fstCulprit ps psLst = head $ culprits ps psLst -- psA psRest
--}
-
-
--- solveBv2 :: [Char] ->
-solveBv2 fileData =
-  let steps  = allSteps fileData
-      groups = gb steps
-      grpSrt = map sortOnXmin groups
-      fstGrp = head grpSrt
-      fstGrpVols = vol $ map snd fstGrp
-      -- (h:t) = fstGrp
-      -- goDiffs = concat $ fst $ foldl (\(accu,cuA) cuB -> (accu ++ [difference cuA cuB],cuB)) ([],h) t
-      -- iFree h t = any (== True) $ map (intersects h) t -- hlint: redundant map!!
-      -- iFree   = any ((== True) . intersects h) t
-      go _   3   = [] -- don't let it go on forever, but might not be needed...
-      -- go _   15    = [('+',[(42,42),(42,42),(42,42)])] -- don't let it go on forever, but might not be needed...
-      go [] _       = [] -- error "didn't do anything!"
-      go grp iter = grp : go (goDiffs grp) (iter+1)
-      -- go grp iter = if iFree grp
-      --                 then head grp : go (goDiffs (tail grp)) (iter+1)
-      --                 else go (goDiffs grp) (iter+1)
-        -- where nGrp = goDiffs grp
-        -- fstGrp
-  in go fstGrp 0 -- fstGrp : go fstGrp 0
+sb3 :: Int -> String -> [PwrStep5 Int]
+sb3 i d = unionOnGrp intersects3 $ take i $ allSteps d
+vb3 :: Int -> String -> Int
+vb3 i d = vol $ map snd $ sb3 i d
 
 solveBv3 fileData =
-  vol $ map snd
-      $ newDiffGrps intersects3 $ allSteps fileData
-
-newtype XYZ = XYZ (Int, Int, Int) deriving (Show)
-data LWH = LWH { xDim::Int, yDim::Int, zDim::Int } deriving (Show)
+  let as = allSteps fileData
+      grps = gb as
+  in
+    vol $ map snd
+      $ unionOnGrp intersects3 $ as
 
 allSteps :: [Char] -> [(Char, [(Int, Int)])]
 allSteps fileData = steps
@@ -351,10 +258,6 @@ appendXYZLWH (onOff, xyzs) = (onOff, xyzs, xyzMinPt, lwh)
              = abs(n0-n1)+1
     lwh      = LWH (head dims) (dims !! 1) (dims !! 2) -- hlint: use head
 
--- ====================================
--- | new call style:                  |
--- |                 ds $ allSteps d  |
--- ====================================
 -- display steps
 ds :: Show a => [a] -> IO ()
 ds d = putStrLn $ unlines $ map show d
@@ -364,49 +267,8 @@ twOn :: [(Char, b)] -> [(Char, b)]
 twOn = takeWhile (\(onOff,_) -> onOff == '+')
 
 -- groupBy on/off
-gb :: [(Char, b)] -> [[(Char, b)]]
+gb :: [PwrStep5 a] -> [[PwrStep5 a]]
 gb = groupBy (\a b -> fst a == fst b)
-
--- union :: PwrStep5 Int -> PwrStep5 Int -> [PwrStep5 Int]
--- -----------------------------------------------------------------
--- take 2 cuboids and break them into a list of cuboids
--- ... with no duplicated cubes
--- ... assumes cuboids (2 rect prisms) are sorted <== necessary?!
--- union cu0 cu1 = [cu0, cu1]
--- union cu0@(cmd0,rng0) cu1@(cmd1,rng1) = [cu0, cu1]
---union :: (a, [(Int, Int)]) -> (a, [(Int, Int)]) -> [(a, [(Int, Int)])]
--- union cu0@(cmd0,rng0) cu1@(cmd1,rng1) = go cu0 cu1 0
-union' cu0@(cmd0, rngA) cu1@(cmd1, rngB) = go rngA rngB 0
-  where
-    go rng0 rng1 idx
-      | rng0    == rng1    = [rng0]        -- might need to change this if "off" ('-') cuboid
-      | vMinCu1 >  vMaxCu0 = [rng0, rng1]  -- non-overlapping
-      | vMinCu0 <  vMinCu1 = aLTb0 : go aLTb1 rng1 idx -- [(cmd0, aLTb1), cu1']
-      | idx     == 2       = [[(4200, idx)]]
-
-      | vMinCu0 == vMinCu1 = -- [cu0', cu1'] -- !!! intersection in "v" !!!
-          go aEQb0 aEQb1 (idx+1) -- ++ go (cmd0, aGTb0) (cmd1, aGTb1) idx
-          -- ++ [aEQb0] ++ [aEQb1]
-
-      | idx == 3      = []
-      | idx >  3      = error "Index out of bounds! BOOM!"
-      | otherwise     = [[(424242,idx)]] -- error "Union go BOOM!"
-      where
-        -- [(x0cu0, x1cu0),(y0cu0, y1cu0),(z0cu0, z1cu0)] = rng0
-        -- [(x0cu1, x1cu1),(y0cu1, y1cu1),(z0cu1, z1cu1)] = rng1
-        (vMinCu0, vMaxCu0) = rng0 !! idx -- (x0cu0, x1cu0)
-        (vMinCu1, vMaxCu1) = rng1 !! idx -- (x0cu1, x1cu1)
-        -- newRngA = take idx rng0 ++ [(vMinCu0, vMinCu1-1)] ++ drop (idx+1) rng0
-        -- newRngB = take idx rng0 ++ [(vMinCu1, vMaxCu0)] ++ drop (idx+1) rng0
-        aLTb0 = replace idx rng0 (vMinCu0, vMinCu1-1)
-        aLTb1 = replace idx rng0 (vMinCu1, vMaxCu0)
-
-        temp0 = replace idx rng0 (vMinCu0, min vMaxCu0 vMaxCu1)
-        temp1 = replace idx rng1 (vMinCu0, min vMaxCu0 vMaxCu1)
-        [aEQb0, aEQb1] = sortXYZs (idx+1) [temp0, temp1]
-
-        aGTb0 = replace idx rng0 (min vMaxCu0 vMaxCu1, vMaxCu0)
-        aGTb1 = replace idx rng1 (min vMaxCu0 vMaxCu1, vMaxCu1)
 
 replace :: Int -> [a] -> a -> [a]
 replace idx' rng axisRng =
@@ -446,12 +308,6 @@ difference intersectFunc pwrStepA@(cmdA, rngA) pwrStepB@(_, rngB) =
     -- NO! for mbX, yes, LT & GT
     -- for mbY, "update" rngA's xRng to be mbX's EQ
     -- for mbZ, "update" updated!! rngA's yRng to be mbY's EQ
-    -- error "nope!"
-    -- mb -- [mbLT, mbEQ, mbGT]
-    -- go rngA rngB 0
-    --   where
-    --     go rng0 rng1 0 = replace 0 rng0 mbLT ++ replace 0 rng0 mbGT ++ []
-    --     go _ _ _ = error "hmm"
 
 vol :: [[(Int, Int)]] -> Int
 vol = sum . map (product . map (\(mn,mx) -> abs(mx-mn)+1))
@@ -489,8 +345,7 @@ verts d =
 -- > > map (map show) e
 -- [["1","2","3"],["4","5","6"],["7","8","9"],["10","11","12"],["13","14","15"],["16","17","18"],["19","20","21"],["22","23","24"],["25","26","27"],["28","29","30"],["31","32","33"],["34","35","36"],["37","38","39"],["40","41","42"]]
 
--- lst2Tup2Lst3 :: Show a => [(a, a)] -> [[String]]
-lst2Tup2Lst3 :: (Integral a, Show a) => [(a, a)] -> [[String]]
+lst2Tup2Lst3 :: (Integral a, Show a) => [Rng a] -> [[String]]
 lst2Tup2Lst3 [(mnX, mxX), (mnY, mxY), (mnZ, mxZ)] =
   -- l3 ==> expand by 0.5 in both directions along each axis
   -- innerShow $ l3 [(mnX, mxX), (mnY, mxY), (mnZ, mxZ)]
@@ -499,20 +354,11 @@ lst2Tup2Lst3 _ = error "Invalid input. Input /= [(a,b),(c,d),(e,f)]!!!"
 
 lst2Tup2Lst3' :: Show a => [(a, a)] -> [[String]]
 lst2Tup2Lst3' [(mnX, mxX), (mnY, mxY), (mnZ, mxZ)] =
-      -- [[mnX,mnY,mnZ], [mnX,mnY,mxZ], [mnX,mxY,mnZ], [mnX,mxY,mxZ]
-      -- ,[mxX,mnY,mnZ], [mxX,mnY,mxZ], [mxX,mxY,mnZ], [mxX,mxY,mxZ]]
--- or ... something like: [[x,y,z] | x <- "ab", y <- "cd", z <- "ef"]
--- or ... something like:
   [[show x, show y, show z] | x <- [mnX, mxX]
                             , y <- [mnY, mxY]
                             , z <- [mnZ, mxZ]]
 lst2Tup2Lst3' _ = error "Invalid input. Input /= [(a,b),(c,d),(e,f)]!!!"
 
--- toFrac :: Fractional a => a -> a
--- toFrac n = n - 0.5
-
--- l2 :: (Integral a) => [(a, a)] -> [[String]]
--- l2 :: (Num a) => [(a, a)] -> [[String]]
 l2 :: (Fractional a, Show a) => [(a, a)] -> [[String]]
 l2 [(mnX, mxX), (mnY, mxY), (mnZ, mxZ)] =
   [[show x, show y, show z] | x <- [mnX - 0.5, mxX + 0.5]
@@ -544,10 +390,6 @@ verts' [(mnX, mxX), (mnY, mxY), (mnZ, mxZ)] =
       ,(mxX,mnY,mnZ), (mxX,mnY,mxZ), (mxX,mxY,mnZ), (mxX,mxY,mxZ)]
 verts' _ = error "42!"
 
-data Ranges = Ranges
-  { xRng :: (Int, Int), yRng :: (Int, Int), zRng :: (Int, Int)
-  } deriving (Show)
-
 myBreak :: (Enum a, Ord a, Num a) => Rng a -> Rng a -> [Maybe (Rng a)]
 myBreak (s1,e1) (s2,e2) = [lt,eq,gt]
   where
@@ -556,16 +398,6 @@ myBreak (s1,e1) (s2,e2) = [lt,eq,gt]
            then Just (max s1 s2, min e1 e2)
            else Nothing
     gt = if e1 > e2 then Just (e2+1, e1) else Nothing
-
-{-
-intersection :: (Num a, Ord a, Enum a) => PwrStep5 a -> PwrStep5 a -> PwrStep5 a
-intersection pwrStepA@(cmdA, cuA) pwrStepB@(_, cuB) =
-  (cmdA, go cuA cuB)
-  where
-    go cuA' cuB'   = zipWith ip cuA' cuB'
-    ip cuA'' cuB'' = (head (i2 cuA'' cuB''), last (i2 cuA'' cuB''))
-    i2 (s1,e1) (s2,e2) = [s1..e1] `intersect` [s2..e2]
--}
 
 intersects :: (Num a, Ord a) => PwrStep5 a -> PwrStep5 a -> Bool
 intersects pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
@@ -576,12 +408,6 @@ intersects pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
     isInsideOneDim ((s1,e1),(s2,e2)) bAccu = -- True
       ((s2 <= s1 && s1 <= e2) || (s2 <= e1 && e1 <= e2))
       && bAccu
-
-intersects2 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
-  where
-    go = all (==True) chkXYZ
-    rngAB  = zip cuA cuB
-    chkXYZ = [s1 `elem` [s2..e2] || e1 `elem` [s2..e2] | ((s1,e1),(s2,e2)) <- rngAB]
 
 intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
   where
@@ -601,64 +427,7 @@ main = do
     ++ show sb3i3
 
 {-
-    > d <- readFile inputTest
-    > lines d !! 0
-    "on x=-20..26,y=-36..17,z=-47..7"
-
-    > l0 = lines d !! 0
-          -- OBSOLETE
-          > takeWhile (/= ' ') l0
-          "on"
-          > tail $ dropWhile (/= ' ') l0
-          "x=-20..26,y=-36..17,z=-47..7"
-
-    > words l0
-    ["on","x=-20..26,y=-36..17,z=-47..7"]
-
-    > rangesStr = words l0 !! 1
-          - considering ... is this more efficient?
-          > break (== ',') rangesStr
-          ("x=-20..26",",y=-36..17,z=-47..7")
-
-    > words $ map (\c -> if c == ',' then ' ' else c) rangesStr
-    ["x=-20..26","y=-36..17","z=-47..7"]
-
-    > xRangeStr = flip (!!) 0
-                  $ words $ map (\c -> if c == ',' then ' ' else c) rangesStr
-
-    > xRange = words $ map (\c -> if (isNumber c) || (c == '-') then c else ' ') xRangeStr
-    ["-20","26"]
-
-          -- unnecessary?!
-          > read "-42"   :: Int
-          -42
-          > read " -42"  :: Int
-          -42
-          > read " -42 " :: Int
-          -42
-
-    > map (\s -> read s :: Int) xRange
-    [-20,26]
-
-    > putStrLn $ unlines $ map (show) $ [(x,y,z) | x<-[10..12],y<-[10..12],z<-[10..12]]
-    output is the 27 (x,y,z) cubes
-
-              Data.Set
-              --------
-              union :: Ord a => Set a -> Set a -> Set a Source #
-
-              O(m*log(n/m + 1)), m <= n. The union of two sets, preferring
-              the first set when equal elements are encountered.
-
-              difference :: Ord a => Set a -> Set a -> Set a Source #
-
-              O(m*log(n/m + 1)), m <= n. Difference of two sets.
-
-              Return elements of the first set not existing in the second set.
-
-              difference (fromList [5, 3]) (fromList [5, 7]) == singleton 3
-
-    > solveA ...
+    > solveA (with inputReal)
     should == 590784  -- cubes "on" inside region:
                       -- x=-50..50,y=-50..50,z=-50..50
 -}

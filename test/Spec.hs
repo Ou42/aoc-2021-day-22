@@ -10,7 +10,7 @@ spec =
   describe "setAdd" $ do
     context "cuboids do not overlap" $
       it "should return list containing the two cuboids" $
-        1 + 2 `shouldBe` 4
+        1 + 2 `shouldBe` 3
 
     -- addCuboids ( Cuboid (1,2) (3,4) (5,6)) (Cuboid (10,11) (12,13) (14,15))
     --   `shouldBe` [ Cuboid (1,2) (3,4) (5,6), Cuboid (10,11) (12,13) (14,15) ]

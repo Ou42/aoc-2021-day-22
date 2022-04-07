@@ -14,4 +14,5 @@ What verbs to use to describe these two operations?  Here's a table of synonyms;
 | `(+)`     | `(-)`          | Confusing with other uses of these operators?    |
 | `add`     | `subtract`     | In one sense: precise, but multi-used elsewhere? |
 | `augment` | `reduce`       | A little more CAD-oriented                       |
+| `sum`     | `difference`   | I am kinda liking this one                       |
 | *add..*   | *your..*       | *own!*                                           |

@@ -78,6 +78,52 @@ type PwrStep5 a = (Char, [Rng a])
 
 -- toIntList = map (\x -> read x :: Int) . words
 
+pairs l = [(x,y) | (x:ys) <- tails l, y <- ys]
+
+intersectUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> Bool
+intersectUsingSets cuA@[ax,ay,az] cuB@[bx,by,bz] =
+  let ixs = S.intersection (S.fromList [fst ax..snd ax]) (S.fromList [fst bx..snd bx])
+      iys = S.intersection (S.fromList [fst ay..snd ay]) (S.fromList [fst by..snd by])
+      izs = S.intersection (S.fromList [fst az..snd az]) (S.fromList [fst bz..snd bz])
+  in not $ null ixs || null iys || null izs
+--  in not (null ixs) && not (null iys) && not (null izs)
+--  in length ixs > 0 && length iys > 0 && length izs > 0
+intersectUsingSets _ _ = error "Wrong # of ranges!"
+
+intersectUsingSets2 :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> (Bool, [Rng a])
+intersectUsingSets2 cuA@[ax,ay,az] cuB@[bx,by,bz] =
+  let ixs = S.intersection (S.fromList [fst ax..snd ax]) (S.fromList [fst bx..snd bx])
+      iys = S.intersection (S.fromList [fst ay..snd ay]) (S.fromList [fst by..snd by])
+      izs = S.intersection (S.fromList [fst az..snd az]) (S.fromList [fst bz..snd bz])
+      hasIntersection = not $ null ixs || null iys || null izs
+      nxs = (S.findMin ixs, S.findMax ixs)
+      nys = (S.findMin iys, S.findMax iys)
+      nzs = (S.findMin izs, S.findMax izs)
+  in (hasIntersection, if hasIntersection then [nxs, nys, nzs] else [])
+--  in (not $ null ixs || null iys || null izs, [nxs, nys, nzs])
+--  in not (null ixs) && not (null iys) && not (null izs)
+--  in length ixs > 0 && length iys > 0 && length izs > 0
+
+intersectUsingSets2 _ _ = error "Wrong # of ranges!"
+
+diffUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+diffUsingSets cuA@[] cuB = []
+diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
+  let (hasIntersection, intersection) = intersectUsingSets2 cuA cuB
+      [iax,iay,iaz] = intersection
+      (iaxMn, iaxMx) = iax
+      (iayMn, iayMx) = iay
+      (iazMn, iazMx) = iaz
+      dxsLT = if axMn  < iaxMn then [(axMn,iaxMn-1), (ayMn,ayMx),    (azMn,azMx)] else []
+      dxsGT = if iaxMx < axMx  then [(iaxMx+1,axMx), (ayMn,ayMx),    (azMn,azMx)] else []
+      dysLT = if ayMn  < iayMn then [iax,            (ayMn,iayMn-1), (azMn,azMx)] else []
+      dysGT = if iayMx < ayMx  then [iax,            (iayMx+1,ayMx), (azMn,azMx)] else []
+      dzsLT = if azMn  < iazMn then [iax,           iay,          (azMn,iazMn-1)] else []
+      dzsGT = if iazMx < azMx  then [iax,           iay,          (iazMx+1,azMx)] else []
+      diffs = filter (not . null) [dxsLT, dxsGT, dysLT, dysGT, dzsLT, dzsGT]
+  in if hasIntersection then diffs else []
+diffUsingSets _ _ = error "Wrong # of ranges!"
+
 sortOnXmin :: (Num a, Ord a) => [PwrStep5 a] -> [PwrStep5 a]
 sortOnXmin = sortBy (compare `on` this) -- (flip compare ...) sorts in descending order
   where

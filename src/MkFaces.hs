@@ -1,4 +1,4 @@
--- module mkfaces where
+module MkFaces where
 
 {-
 -- +---------------------------------+
@@ -12,7 +12,7 @@ mkFaces n = unlines $ map go [0..n-1]
       go i =  -- o cu-01 ...
         --   ("o cu-" ++ (if 5 < 10 then "0" else "") ++ show (5+1) ++ "\n") ++
         --   ("o cu-" ++ (if i < 10 then "0" else "") ++ show (i+1) ++ "\n") ++
-          (++) ("o cu-" ++ (if i < 9 then "0" else "") ++ show (i+1) ++ "\n") 
+          (++) ("o cu-" ++ (if i < 9 then "0" else "") ++ show (i+1) ++ "\n")
           $
         --   unlines $ map (("o cu-" ++ show (i+1) ++ "\n")++) $
         --   unlines $ map ((++)"f " . intercalate " " . (map (show . (*8)))) faces

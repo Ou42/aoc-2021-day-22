@@ -38,11 +38,11 @@ import Data.List.Split (chunksOf)
 -- import GHC.RTS.Flags (GCFlags(ringBell))
 
 inputTest :: [Char]
-inputTest = "Day-22-INPUT-test.txt"
+inputTest = "data/Day-22-INPUT-test.txt"
 inputReal :: [Char]
-inputReal = "Day-22-INPUT.txt"
+inputReal = "data/Day-22-INPUT.txt"
 i3 :: [Char]
-i3 = "i3.txt"
+i3 = "data/i3.txt"
 
 {-
     Ideas:
@@ -92,7 +92,7 @@ type PwrStep5 a = (Char, [Rng a])
   --    (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH)
   -- Perhaps you intended to use RankNTypesreq {-# LANGUAGE RankNTypes #-}
 
--- data HMM2 a :: (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH) -- Did you mean to enable PolyKinds?
+-- data HMM2 a = HMM2 (Num a, Ord a) => (Char, [(a, a)], XYZ, LWH) -- Did you mean to enable PolyKinds?
 
 -- sortBy (\(_,a) (_,b) -> compare (fst $ head a) (fst $ head b))
 
@@ -233,7 +233,7 @@ getDiffGrps (h:t) =
 getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 
 -- goDiffs = concat getDiffGrps
-goDiffs :: (Enum a, Ord a, Num a) => [(Char, [Rng a])] -> [(Char, [Rng a])]
+goDiffs :: [(Char, [Rng Int])] -> [(Char, [Rng Int])]
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 {-
@@ -254,10 +254,10 @@ goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 -- newDiffGrps :: (Enum a, Ord a, Num a) =>
 --                         ((Char, [Rng a]) -> (Char, [Rng a]) -> Bool)
 --                         -> [(Char, [Rng a])] -> [(Char, [Rng a])]
-newDiffGrps :: (Enum a, Ord a, Num a) =>
-                        (PwrStep5 a -> PwrStep5 a -> Bool)
-                        -> [PwrStep5 a]
-                        -> [PwrStep5 a]
+newDiffGrps ::
+                        (PwrStep5 Int -> PwrStep5 Int -> Bool)
+                        -> [PwrStep5 Int]
+                        -> [PwrStep5 Int]
 newDiffGrps _ []    = error "EMPTY!! Power Step List!"
 newDiffGrps _ [psA] = [psA]
 newDiffGrps intersectFunc pwrStepLst@(psA:psRest) =
@@ -412,6 +412,7 @@ replace :: Int -> [a] -> a -> [a]
 replace idx' rng axisRng =
   take idx' rng ++ [axisRng] ++ drop (idx'+1) rng
 
+difference :: (PwrStep5 Int -> PwrStep5 Int -> Bool) -> PwrStep5 Int -> PwrStep5 Int -> [PwrStep5 Int]
 difference intersectFunc pwrStepA@(cmdA, rngA) pwrStepB@(_, rngB) =
   let
     mbX   = myBreak (head rngA) (head rngB)
@@ -583,6 +584,7 @@ intersects2 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
     rngAB  = zip cuA cuB
     chkXYZ = [s1 `elem` [s2..e2] || e1 `elem` [s2..e2] | ((s1,e1),(s2,e2)) <- rngAB]
 
+intersects3 :: PwrStep5 Int -> PwrStep5 Int -> Bool
 intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
   where
     go = all (==True) chkXYZ

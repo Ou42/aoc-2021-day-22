@@ -38,11 +38,11 @@ import Data.List.Split (chunksOf)
 -- import GHC.RTS.Flags (GCFlags(ringBell))
 
 inputTest :: [Char]
-inputTest = "Day-22-INPUT-test.txt"
+inputTest = "data/Day-22-INPUT-test.txt"
 inputReal :: [Char]
-inputReal = "Day-22-INPUT.txt"
+inputReal = "data/Day-22-INPUT.txt"
 i3 :: [Char]
-i3 = "i3.txt"
+i3 = "data/i3.txt"
 
 {-
     Ideas:

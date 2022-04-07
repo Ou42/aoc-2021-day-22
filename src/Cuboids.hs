@@ -1,17 +1,22 @@
 module Cuboids where
 
-
-data Operation = Operation
-  { action :: Cuboid -> Cuboid -> [Cuboid]
+{- TODO - precisely comment this
+-}
+data Action = Operation
+  { combine :: Cuboid -> Cuboid -> [Cuboid]
   , source :: Cuboid
   , target :: Cuboid
   }
 
-augment :: Cuboid -> Cuboid -> [ Cuboid ]
-augment source target = [] -- TODO
+{- TODO - precisely comment this
+-}
+sum :: Cuboid -> Cuboid -> [ Cuboid ]
+sum source target = [] -- TODO
 
-reduce :: Cuboid -> Cuboid -> [ Cuboid ]
-reduce source target = [] -- TODO
+{- TODO - precisely comment this
+-}
+difference :: Cuboid -> Cuboid -> [ Cuboid ]
+difference source target = [] -- TODO
 
 data Cuboid = Cuboid
   { x :: Range

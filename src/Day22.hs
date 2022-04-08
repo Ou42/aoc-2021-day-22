@@ -136,7 +136,8 @@ add2Cuboids cuA cuB = cuB : diffUsingSets cuA cuB
 
 -- addCuboids :: (Num a, Ord a, Enum a) => [[Rng a]] -> [Rng a] -> [[Rng a]]
 addCuboids :: (Num a, Ord a, Enum a) => [Cuboid a] -> Cuboid a -> [Cuboid a]
-addCuboids cuLst cub = concatMap (`diffUsingSets` cub) cuLst
+-- addCuboids cuLst cub = concatMap (`diffUsingSets` cub) cuLst
+addCuboids cuLst cuB = concatMap (\cuA -> diffUsingSets cuA cuB) cuLst -- didn't change anything!
 
 -- runAddOnCLst :: (Num a, Ord a, Enum a) => [[Rng a]] -> [[Rng a]]
 runAddOnCLst :: (Num a, Ord a, Enum a) => [Cuboid a] -> [Cuboid a]
@@ -146,6 +147,29 @@ runAddOnCLst cuLst = foldl (\accu cuA -> cuA : (addCuboids accu cuA) ++ tail acc
                           --  -> (add2Cuboids (head accu) cuA) ++ tail accu)
                           --  [head cuLst]
                           --  (tail cuLst)
+
+iFreeProbs cuLst = foldl (\accu (cu:cus) -> (map (\cu2 -> if (intersectUsingSets cu cu2)
+                                                            then [42]
+                                                            else []) cus):accu) [] ((init . tails) cuLst)
+
+iFreeProbs2 cuLst = foldl (\accu (cu:cus) -> (map (\cu2 -> if (intersectUsingSets cu cu2)
+                                                            then [cu,cu2]
+                                                            else []) cus):accu) [] ((init . tails) cuLst)
+
+iFreeAllLsts cuLst = foldl (\accu (cu:cus) -> (map (intersectUsingSets cu) cus):accu) [] ((init . tails) cuLst)
+iFreeAll cuLst = all (==False) $ concat $ iFreeAllLsts cuLst
+
+runAddOnCLstDebug :: (Num a, Ord a, Enum a, Show a) => [Cuboid a] -> [Cuboid a]
+runAddOnCLstDebug cuLst = foldl go [head cuLst] (tail cuLst)
+  where
+    addOp accu' cuA' = cuA' : (addCuboids accu' cuA') ++ tail accu'
+    -- go    accu cuA   = if iFreeAll (addOp accu cuA) then addOp accu cuA else error "DANGER! DANGER!"
+    -- go    accu cuA   = if iFreeAll (addOp accu cuA) then addOp accu cuA else error ("DANGER! DANGER!\n" ++ un (addOp accu cuA))
+    -- go    accu cuA   = if iFreeAll (addOp accu cuA) then addOp accu cuA else error ("DANGER! DANGER!\n" ++ show (addOp accu cuA))
+    go    accu cuA   =
+      let res = (addOp accu cuA)
+      in if iFreeAll res then res else error (show res)
+
 
 sortOnXmin :: (Num a, Ord a) => [PwrStep5 a] -> [PwrStep5 a]
 sortOnXmin = sortBy (compare `on` this) -- (flip compare ...) sorts in descending order
@@ -330,6 +354,8 @@ appendXYZLWH (onOff, xyzs) = (onOff, xyzs, xyzMinPt, lwh)
 -- display steps
 ds :: Show a => [a] -> IO ()
 ds d = putStrLn $ unlines $ map show d
+
+un d = unlines $ map show d
 
 -- takeWhile "on"
 twOn :: [(Char, b)] -> [(Char, b)]

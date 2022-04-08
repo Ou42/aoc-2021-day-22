@@ -26,18 +26,19 @@ module Day22 where
 -}
 
 import Data.Char ( isDigit )
-import Data.List ( sort, sortBy, groupBy, intersect, intersperse, intercalate )
+import Data.List ( sort, sortBy, groupBy, intersect
+                 , intersperse, intercalate, tails )
 import Data.Function (on)
 import Data.Maybe (catMaybes, isNothing, maybe)
 import qualified Data.Set as S
 import Data.List.Split (chunksOf)
 
 inputTest :: [Char]
-inputTest = "Day-22-INPUT-test.txt"
+inputTest = "data/Day-22-INPUT-test.txt"
 inputReal :: [Char]
-inputReal = "Day-22-INPUT.txt"
+inputReal = "data/Day-22-INPUT.txt"
 i3 :: [Char]
-i3 = "i3.txt"
+i3 = "data/i3.txt"
 
 {-
     Ideas:
@@ -231,7 +232,7 @@ getDiffGrps (h:t) =
 getDiffGrps _ = error "List of cuboids empty?! or length 1?!"
 
 -- goDiffs = concat getDiffGrps
-goDiffs :: (Enum a, Ord a, Num a) => [(Char, [Rng a])] -> [(Char, [Rng a])]
+goDiffs :: [(Char, [Rng Int])] -> [(Char, [Rng Int])]
 goDiffs cuboidLst = concat (getDiffGrps cuboidLst) ++ [last cuboidLst]
 
 {-
@@ -272,11 +273,11 @@ diffOnGrpVsOneOff onGrp oneOff = -- error "???"
 
 sa :: Int -> String -> String
 sa i d = unlines $ take i $ lines d
-sb1 :: Int -> String -> [PwrStep5 Int]
+-- sb1 :: Int -> String -> [PwrStep5 Int]
 sb1 i d = unionOnGrp intersects $ take i $ allSteps d
 vb1 :: Int -> String -> Int
 vb1 i d = vol $ map snd $ sb1 i d
-sb3 :: Int -> String -> [PwrStep5 Int]
+-- sb3 :: Int -> String -> [PwrStep5 Int]
 sb3 i d = unionOnGrp intersects3 $ take i $ allSteps d
 vb3 :: Int -> String -> Int
 vb3 i d = vol $ map snd $ sb3 i d
@@ -320,6 +321,7 @@ replace :: Int -> [a] -> a -> [a]
 replace idx' rng axisRng =
   take idx' rng ++ [axisRng] ++ drop (idx'+1) rng
 
+difference :: (Enum a, Ord a, Num a) => (PwrStep5 a -> PwrStep5 a -> Bool) -> PwrStep5 a -> PwrStep5 a -> [PwrStep5 a]
 difference intersectFunc pwrStepA@(cmdA, rngA) pwrStepB@(_, rngB) =
   let
     mbX   = myBreak (head rngA) (head rngB)
@@ -455,6 +457,13 @@ intersects pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
       ((s2 <= s1 && s1 <= e2) || (s2 <= e1 && e1 <= e2))
       && bAccu
 
+intersects2 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
+  where
+    go = all (==True) chkXYZ
+    rngAB  = zip cuA cuB
+    chkXYZ = [s1 `elem` [s2..e2] || e1 `elem` [s2..e2] | ((s1,e1),(s2,e2)) <- rngAB]
+
+intersects3 :: (Num a, Ord a, Enum a) => PwrStep5 a -> PwrStep5 a -> Bool
 intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
   where
     go = all (==True) chkXYZ

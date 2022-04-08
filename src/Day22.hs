@@ -73,6 +73,7 @@ newtype XYZ = XYZ (Int, Int, Int) deriving (Show)
 data LWH = LWH { xDim::Int, yDim::Int, zDim::Int } deriving (Show)
 
 type Rng a      = (a,a)
+type Cuboid a   = [Rng a]
 -- 'PwrStep4 a' doesn't req {-# LANGUAGE RankNTypes #-}
 type PwrStep4 a = (Char, [Rng a], XYZ, LWH)
 type PwrStep5 a = (Char, [Rng a])
@@ -81,7 +82,8 @@ type PwrStep5 a = (Char, [Rng a])
 
 pairs l = [(x,y) | (x:ys) <- tails l, y <- ys]
 
-intersectUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> Bool
+intersectUsingSets :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> Bool
+--intersectUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> Bool
 intersectUsingSets cuA@[ax,ay,az] cuB@[bx,by,bz] =
   let ixs = S.intersection (S.fromList [fst ax..snd ax]) (S.fromList [fst bx..snd bx])
       iys = S.intersection (S.fromList [fst ay..snd ay]) (S.fromList [fst by..snd by])
@@ -91,7 +93,8 @@ intersectUsingSets cuA@[ax,ay,az] cuB@[bx,by,bz] =
 --  in length ixs > 0 && length iys > 0 && length izs > 0
 intersectUsingSets _ _ = error "Wrong # of ranges!"
 
-intersectUsingSets2 :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> (Bool, [Rng a])
+-- intersectUsingSets2 :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> (Bool, [Rng a])
+intersectUsingSets2 :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> (Bool, Cuboid a)
 intersectUsingSets2 cuA@[ax,ay,az] cuB@[bx,by,bz] =
   let ixs = S.intersection (S.fromList [fst ax..snd ax]) (S.fromList [fst bx..snd bx])
       iys = S.intersection (S.fromList [fst ay..snd ay]) (S.fromList [fst by..snd by])
@@ -107,7 +110,8 @@ intersectUsingSets2 cuA@[ax,ay,az] cuB@[bx,by,bz] =
 
 intersectUsingSets2 _ _ = error "Wrong # of ranges!"
 
-diffUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+-- diffUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+diffUsingSets :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> [Cuboid a]
 diffUsingSets cuA@[] cuB = []
 diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
   let (hasIntersection, intersection) = intersectUsingSets2 cuA cuB
@@ -125,14 +129,17 @@ diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
   in if hasIntersection then diffs else []
 diffUsingSets _ _ = error "Wrong # of ranges!"
 
-add2Cuboids :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+-- add2Cuboids :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+add2Cuboids :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> [Cuboid a]
 add2Cuboids [] cuB  = [cuB]
 add2Cuboids cuA cuB = cuB : diffUsingSets cuA cuB
 
-addCuboids :: (Num a, Ord a, Enum a) => [[Rng a]] -> [Rng a] -> [[Rng a]]
+-- addCuboids :: (Num a, Ord a, Enum a) => [[Rng a]] -> [Rng a] -> [[Rng a]]
+addCuboids :: (Num a, Ord a, Enum a) => [Cuboid a] -> Cuboid a -> [Cuboid a]
 addCuboids cuLst cub = concatMap (`diffUsingSets` cub) cuLst
 
-runAddOnCLst :: (Num a, Ord a, Enum a) => [[Rng a]] -> [[Rng a]]
+-- runAddOnCLst :: (Num a, Ord a, Enum a) => [[Rng a]] -> [[Rng a]]
+runAddOnCLst :: (Num a, Ord a, Enum a) => [Cuboid a] -> [Cuboid a]
 runAddOnCLst cuLst = foldl (\accu cuA -> cuA : (addCuboids accu cuA) ++ tail accu)
                        [head cuLst]
                        (tail cuLst)

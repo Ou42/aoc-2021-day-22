@@ -125,6 +125,21 @@ diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
   in if hasIntersection then diffs else []
 diffUsingSets _ _ = error "Wrong # of ranges!"
 
+add2Cuboids :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+add2Cuboids [] cuB  = [cuB]
+add2Cuboids cuA cuB = cuB : diffUsingSets cuA cuB
+
+addCuboids :: (Num a, Ord a, Enum a) => [[Rng a]] -> [Rng a] -> [[Rng a]]
+addCuboids cuLst cub = concatMap (`diffUsingSets` cub) cuLst
+
+runAddOnCLst :: (Num a, Ord a, Enum a) => [[Rng a]] -> [[Rng a]]
+runAddOnCLst cuLst = foldl (\accu cuA -> cuA : (addCuboids accu cuA) ++ tail accu)
+                       [head cuLst]
+                       (tail cuLst)
+                          --  -> (add2Cuboids (head accu) cuA) ++ tail accu)
+                          --  [head cuLst]
+                          --  (tail cuLst)
+
 sortOnXmin :: (Num a, Ord a) => [PwrStep5 a] -> [PwrStep5 a]
 sortOnXmin = sortBy (compare `on` this) -- (flip compare ...) sorts in descending order
   where

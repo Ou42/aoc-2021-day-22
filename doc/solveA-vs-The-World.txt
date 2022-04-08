@@ -1,0 +1,32 @@
+2022-04-08 - TESTS
+
+*Day22> d <- readFile i3
+*Day22> as = allSteps d
+*Day22> sas = map snd as
+*Day22> take 4 as
+                                    [('+',  [(-32,18),(-49,-2),(-43, 3)])
+                                    ,('+',  [(-15,35),(-31,16),( -9,43)])
+                                    ,('+',  [(-22,23),(  2,47),(-35,13)])
+                                    ,('+',  [(-45, 8),(-18,27),(-34,17)])]
+*Day22> take 4 sas
+                                    [       [(-32,18),(-49,-2),(-43, 3)]
+                                    ,       [(-15,35),(-31,16),( -9,43)]
+                                    ,       [(-22,23),(  2,47),(-35,13)]
+                                    ,       [(-45, 8),(-18,27),(-34,17)]]
+*Day22> unlines $ take 4 $ lines d
+                                   "on x=-32..18,y=-49..-2,z=-43.. 3\n
+                                    on x=-15..35,y=-31..16,z= -9..43\n
+                                    on x=-22..23,y=  2..47,z=-35..13\n
+                                    on x=-45.. 8,y=-18..27,z=-34..17\n"
+
+-- comparing result of the above 4 -- does NOT match:
+*Day22> solveA $ unlines $ take 4 $ lines d
+376667
+*Day22> vol $ runAddOnCLst $ take 4 sas
+535460
+
+-- comparing result of the first 3 -- DOES match:
+*Day22> solveA $ unlines $ take 3 $ lines d
+321769
+*Day22> vol $ runAddOnCLst $ take 3 sas
+321769

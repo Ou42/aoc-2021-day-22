@@ -32,6 +32,7 @@ import Data.Function (on)
 import Data.Maybe (catMaybes, isNothing, maybe)
 import qualified Data.Set as S
 import Data.List.Split (chunksOf)
+import TcGenDeriv (boxConTbl)
 
 inputTest :: [Char]
 inputTest = "data/Day-22-INPUT-test.txt"
@@ -110,11 +111,11 @@ intersectUsingSets2 cuA@[ax,ay,az] cuB@[bx,by,bz] =
 
 intersectUsingSets2 _ _ = error "Wrong # of ranges!"
 
--- diffUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
+-- diffUsingSets :: (Num a, Ord a, Enum a) => [Rng a] -> Rng a[] -> [[Rng a]]
 diffUsingSets :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> [Cuboid a]
 diffUsingSets cuA@[] cuB = []
 diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
-  let (hasIntersection, intersection) = intersectUsingSets2 cuA cuB
+  let (hasIntersection, intersection) = intersectUsingSets2 cuA cuB -- 04-08 instead of (Bool, Cuboid a) return Maybe Cuboid a
       [iax,iay,iaz] = intersection
       (iaxMn, iaxMx) = iax
       (iayMn, iayMx) = iay
@@ -128,6 +129,15 @@ diffUsingSets cuA@[(axMn,axMx),(ayMn,ayMx),(azMn,azMx)] cuB =
       diffs = filter (not . null) [dxsLT, dxsGT, dysLT, dysGT, dzsLT, dzsGT]
   in if hasIntersection then diffs else []
 diffUsingSets _ _ = error "Wrong # of ranges!"
+
+{-
+    [(-15,8),(-18,-2),(-43,-35)] [(-15,18),(-31,-2),(-43,-10)]
+
+    ax contained by bx
+    ay contained by by
+    az contained by bz  ==
+
+-}
 
 -- add2Cuboids :: (Num a, Ord a, Enum a) => [Rng a] -> [Rng a] -> [[Rng a]]
 add2Cuboids :: (Num a, Ord a, Enum a) => Cuboid a -> Cuboid a -> [Cuboid a]

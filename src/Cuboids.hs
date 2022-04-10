@@ -1,5 +1,23 @@
 module Cuboids where
 
+{- | Parse the exercise's input file to a list of reboot steps.
+   |
+   | Example:
+   |
+   | rebootSteps =
+   |   parseInputFile "data/Day-22-Input-test.txt"
+-}
+parseInputFile :: String -> RebootSteps
+parseInputFile filePath = RebootSteps [] -- TODO
+
+-- import Utils (sequenceSteps) -- TODO (maybe)
+
+{- | Sequence the reboot steps needed which, when executed, will generate
+   | a list of non-intersecting cuboids.  Taking the sum of the volumes
+   | of these cuboids will yield the answer to the Day 22 puzzle.
+-}
+-- sequenceRebootSteps [RebootStep, Cursor] =
+
 {- | The actions parsed from the "reboot" file provided by the Day-22 exercise.
 -}
 newtype RebootSteps = RebootSteps [ RebootStep ]

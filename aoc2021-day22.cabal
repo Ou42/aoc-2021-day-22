@@ -27,8 +27,10 @@ library
   exposed-modules:
       Cuboids
       Day22
+      Day22Old
       Lib
       MkFaces
+      Utils
   other-modules:
       Paths_aoc2021_day22
   hs-source-dirs:

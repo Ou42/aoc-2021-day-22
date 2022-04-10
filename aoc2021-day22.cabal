@@ -25,10 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Cuboids
       Day22
       Day22Old
-      Lib
       MkFaces
       Utils
   other-modules:
@@ -41,12 +39,19 @@ library
     , ghc >=8.10.0 && <9.0
     , hspec
     , split
+    , text
   default-language: Haskell2010
 
 executable aoc2021-day22-exe
   main-is: Main.hs
+  other-modules:
+      Day22
+      Day22Old
+      MkFaces
+      Utils
   hs-source-dirs:
       app
+      src
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc2021-day22
@@ -55,15 +60,21 @@ executable aoc2021-day22-exe
     , ghc >=8.10.0 && <9.0
     , hspec
     , split
+    , text
   default-language: Haskell2010
 
 test-suite aoc2021-day22-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Day22
+      Day22Old
+      MkFaces
+      Utils
       Paths_aoc2021_day22
   hs-source-dirs:
       test
+      src
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc2021-day22
@@ -72,4 +83,5 @@ test-suite aoc2021-day22-test
     , ghc >=8.10.0 && <9.0
     , hspec
     , split
+    , text
   default-language: Haskell2010

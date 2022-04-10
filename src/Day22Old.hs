@@ -529,15 +529,15 @@ intersects3 pwrStepA@(_, cuA) pwrStepB@(_, cuB) = go
     chkXYZ = [  s1 `elem` [s2..e2] || e1 `elem` [s2..e2]
              || s2 `elem` [s1..e1] || e2 `elem` [s1..e1] | ((s1,e1),(s2,e2)) <- rngAB]
 
-main :: IO ()
-main = do
-  d <- readFile i3
-  let sai3 = solveA d
-  putStrLn $ "solveA on (" ++ i3 ++ ") \t= " ++ show sai3
+-- main :: IO ()
+-- main = do
+--   d <- readFile i3
+--   let sai3 = solveA d
+--   putStrLn $ "solveA on (" ++ i3 ++ ") \t= " ++ show sai3
 
-  let sb3i3 = solveBv3 d
-  putStrLn $ "\"solveBv3\" on (" ++ i3 ++ ") \t= "
-    ++ show sb3i3
+--   let sb3i3 = solveBv3 d
+--   putStrLn $ "\"solveBv3\" on (" ++ i3 ++ ") \t= "
+--     ++ show sb3i3
 
 {-
     > solveA (with inputReal)

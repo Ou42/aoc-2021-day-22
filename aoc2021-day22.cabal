@@ -25,9 +25,11 @@ source-repository head
 
 library
   exposed-modules:
+      Cuboid
       Day22
       Day22Old
       MkFaces
+      Segment
       Utils
   other-modules:
       Paths_aoc2021_day22
@@ -45,9 +47,11 @@ library
 executable aoc2021-day22-exe
   main-is: Main.hs
   other-modules:
+      Cuboid
       Day22
       Day22Old
       MkFaces
+      Segment
       Utils
   hs-source-dirs:
       app
@@ -67,9 +71,11 @@ test-suite aoc2021-day22-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Cuboid
       Day22
       Day22Old
       MkFaces
+      Segment
       Utils
       Paths_aoc2021_day22
   hs-source-dirs:

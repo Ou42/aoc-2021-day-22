@@ -29,6 +29,7 @@ library
       Day22
       Day22Old
       MkFaces
+      RebootStep
       Remnant
       Segment
       Utils
@@ -52,6 +53,7 @@ executable aoc2021-day22-exe
       Day22
       Day22Old
       MkFaces
+      RebootStep
       Remnant
       Segment
       Utils
@@ -77,6 +79,7 @@ test-suite aoc2021-day22-test
       Day22
       Day22Old
       MkFaces
+      RebootStep
       Remnant
       Segment
       Utils

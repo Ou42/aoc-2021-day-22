@@ -1,15 +1,9 @@
 module Day22 where
 
-import Cuboid (Cuboid(..), parseCuboid, volume)
-import RebootStep (generateRemnant, parseInputText)
-import Remnant (Remnant, augment, reduce)
+import SolutionChoices (filePath, solutionToUse, solveIt)
 
-solvePuzzle :: String -> IO ()
-solvePuzzle filePath = do
-   inputText <- readFile filePath
-   print (parseInputText inputText)
+solvePuzzle :: IO ()
+solvePuzzle = do
+  inputText <- readFile filePath
+  print $ solveIt inputText
 
-
-solver :: String -> Int
-solver inputText =
-  sum $ map volume $ generateRemnant $ parseInputText inputText

@@ -31,7 +31,9 @@ library
       MkFaces
       RebootStep
       Remnant
+      RunningCode
       Segment
+      SolutionChoices
       Utils
   other-modules:
       Paths_aoc2021_day22
@@ -55,7 +57,9 @@ executable aoc2021-day22-exe
       MkFaces
       RebootStep
       Remnant
+      RunningCode
       Segment
+      SolutionChoices
       Utils
   hs-source-dirs:
       app
@@ -81,7 +85,9 @@ test-suite aoc2021-day22-test
       MkFaces
       RebootStep
       Remnant
+      RunningCode
       Segment
+      SolutionChoices
       Utils
       Paths_aoc2021_day22
   hs-source-dirs:

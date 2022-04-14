@@ -29,6 +29,7 @@ library
       Day22
       Day22Old
       MkFaces
+      Remnant
       Segment
       Utils
   other-modules:
@@ -51,6 +52,7 @@ executable aoc2021-day22-exe
       Day22
       Day22Old
       MkFaces
+      Remnant
       Segment
       Utils
   hs-source-dirs:
@@ -75,6 +77,7 @@ test-suite aoc2021-day22-test
       Day22
       Day22Old
       MkFaces
+      Remnant
       Segment
       Utils
       Paths_aoc2021_day22

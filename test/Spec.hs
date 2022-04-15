@@ -5,7 +5,9 @@ module Main where
 import Test.Hspec
 import qualified Data.Text as T
 
-import Day22 (Cuboid(..), Segment(..), RebootOperator(Sum), RebootStep(..), Segment, parseLine, x, y, z)
+import Cuboid(Cuboid(..))
+import Segment(Segment(..))
+import RebootStep(RebootStep(..), RebootOperator(..), parseLine)
 
 main :: IO ()
 main = hspec spec
@@ -16,10 +18,10 @@ spec =
     context "parseLine for '+'" $ do
       it "directly check the 'RebootStep' function" $ do
         actual `shouldBe`
-          RebootStep (Sum, Cuboid {x = Segment (-20, 26), y = Segment (- 36, 17), z = Segment (- 47, 7)})
-      it "should return the reboot step with function sum" $ do
+          RebootStep (Augment, Cuboid {x = Segment (-20, 26), y = Segment (- 36, 17), z = Segment (- 47, 7)})
+      it "should return the reboot step with function augment" $ do
         show actual `shouldBe`
-          "RebootStep (Sum,Cuboid {x = (-20,26), y = (-36,17), z = (-47,7)})"
+          "RebootStep (Augment,Cuboid {x = (-20,26), y = (-36,17), z = (-47,7)})"
     where actual = parseLine (T.pack "on x=-20..26,y=-36..17,z=-47..7")
 
   -- describe "setAdd" $ do

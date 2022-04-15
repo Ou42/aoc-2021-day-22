@@ -31,7 +31,7 @@ parseLine line =
    where
       mapTopTuple :: [T.Text] -> RebootStep
       mapTopTuple (combine:(cuboidStr:remainder)) =
-         RebootStep ( if combine == "on" then Sum else Difference
+         RebootStep ( if combine == "on" then Augment else Reduce
                     , parseCuboid cuboidStr
                     )
 
@@ -40,7 +40,7 @@ generateRemnant rbs = [] -- TODO
 
 {- Selects the function to implement the combining of the source and target cuboids
 -}
-data RebootOperator = Sum | Difference deriving (Eq, Show)
+data RebootOperator = Augment | Reduce deriving (Eq, Show)
 
 {- | Applies a `RebootStep` to a target `Cuboid`
    |

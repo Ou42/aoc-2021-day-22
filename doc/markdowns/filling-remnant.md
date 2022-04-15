@@ -21,30 +21,38 @@ where
 
 It's the middle step, **`generateRemnant`** that is the hard part; the reduction of the cuboids specified in the `RebootStep` list is a non-trivial puzzle to figure out.
 
-## Top-level Approach
+# Top-level Approach
 
 The top-level approach is to modify the `rebootStep`s cuboids to identify how they overlap with each other, and then derive a new collection of non-intersecting cuboids having the same collective volume as the merging and reduction of the original `rebootStep` cuboids.
 
 Later in this document we'll discuss the algoritms for identifying the new set of non-intersecting algorithms resulting from combining two cuboids.  But before we do that, I want to figure out the broader challenge of how to recursivly make sure that cuboids are continually broken apart until all cuboids are completely non-intesecting with each other.
 
-### Preconditions
+# Preconditions
 
 1. Ultimately, the algorithm has two operations, **augmentation** and **reduction**.  The two have different combinational effects, and so will be approached separately.
 1. There are the following entities:
     * The list of initial cuboids, each with their associated actions, **augment** or **reduce**.
     * The target **remant** is empty.
 
-### Approach
+# Approach
 
 Here goes:
 
-For the first cuboid, since there are no cuboids in the **remnant**, place the first cuboid in it.  This is the first non-intersecting cuboid in the **remnant** since there are no other cubois in it.  Now that we have all of the non-intersecting cuboids for the first **rebootstep** cuboid, consider this **renmant** to be the *input* **remnant** in the following discussion.
+## Initialization
 
----
+1. Skip to the first **augment** **rebootstep** (ignoring the previous **reduce** steps).[^1]
+1. Since there are no cuboids in the **remnant**, place the first **augment** **rebootsteps**'s cuboid in it.  This is the first non-intersecting cuboid in the **remnant** since there are no other cubois in it.  Now that we have all of the non-intersecting cuboids for the first **rebootstep** cuboid, consider this **renmant** to be the *input* **remnant** in the following discussion.
+
+## Do It Over and Over
 
 Repeat the following process for the remaining cuboids in the **reboot steps** list:
 
-Identify the cuboid in the current **rebootstep**.  This is always indentified as the *target* cuboid, in that the cuboids in the **remnant** will be repeatedly applied to the target to fracture itself into sufficiently small pieces that the subset of the remaiing pieces will be dumped into a new *output* **remant**.
+For the current **rebootstep**
+
+1. Remember the action, **augment** or **reduce**, specified in the **rebootstep**.
+
+### If the action is an **augmentation**
+Identify the cuboid in the current **rebootstep**.  This is always indentified as the *target* cuboid, in that the cuboids in the **remnant** will be repeatedly applied to the target to fracture it into sufficiently small pieces that the subset of the remaining pieces will be dumped into a new *output* **remant**.
 
 Hence:
 
@@ -59,16 +67,31 @@ If the pair intersect, then do the following:
 At the end of this process for each **rebootStep** cuboid:
 
 1. The *target* remnant will have all of the non-intersecting cuboids needed to represent this **rebootStep** cuboid and the previous **rebootStep** cuboids.
-1. Prepend the *target* **remnant** to the *source* **remnant**.[^1]
+1. Prepend the *target* **remnant** to the *source* **remnant**.[^2]
 1. Reset the *target* **remant** to empty.
-1. Now we are ready for the next **rebootStep** cuboid; hence repeat this step.
+
+### Else the action is a **reduction**
+
+**Reduce** the current **rebootstep**'s cuboid to each cuboid in the *source* **remnant**:
+
+If the pair intersect, then:
+
+1. Indentify the *intersection* cuboid and the remaining *non-intersection* cuboids.
+1. Add the *non-intersection* cuboids to the *target* **remnant**.
+
+At the end of this process for each **rebootstep** cuboid:
+
+1. The *target* remnant will have all of the non-intersecting cuboids needed to represent this **rebootStep** cuboid and the previous **rebootStep** cuboids.
+1. Do NOT prepend the *target* **remnant** to the *source* **remnant**, instead *replace it!*.[^3]
+
+## And, we're done for this **rebootstep**
 
 ---
 
-** TODO
+## Footnotes
 
-1. Implement how **reduce** works (should be much easier).
+[^1]: Since there's no purpose in applying a **reduce** to an empty **remnant**.
 
-** Footnotes
+[^2]: This is because concatenating a long list to the end of a short list is faster than vice-versa.
 
-[^1]: This is because concatenating a long list to the end of a short list is faster than vice-versa.
+[^3]: This realizes that a **reduce** action applied across the *souce* **remnant** removes everything that intersects with the **reduction**'s cuboid up to that point.

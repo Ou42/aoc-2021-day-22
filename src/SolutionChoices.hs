@@ -1,9 +1,8 @@
-{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module SolutionChoices where
 
-import Cuboid (Cuboid(..), parseCuboid, volume)
+import Cuboid (volume)
 import RebootStep (generateRemnant, parseInputText)
 import Remnant (Remnant, augment, reduce)
 import qualified RunningCode as RC

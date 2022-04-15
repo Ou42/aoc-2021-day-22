@@ -71,4 +71,4 @@ At the end of this process for each **rebootStep** cuboid:
 
 ** Footnotes
 
-[^1]: This is because concatenating a long list to the end of a short list is faster than vice-versa.
+[^1]: The order is important because concatenating a long list to the end of a short list is faster than vice-versa.

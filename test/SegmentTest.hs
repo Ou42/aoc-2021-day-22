@@ -1,5 +1,7 @@
 module SegmentTest where
 
+{- | Testing-assist functions for SegmentSpec
+-}
 import Segment (Segment(..))
 
 {- | AdjacentRight

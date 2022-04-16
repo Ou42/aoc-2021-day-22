@@ -18,10 +18,10 @@ spec =
     context "parseLine for '+'" $ do
       it "directly check the 'RebootStep' function" $ do
         actual `shouldBe`
-          RebootStep (Augment, Cuboid [Segment (-20, 26), Segment (- 36, 17), Segment (- 47, 7)])
+          RebootStep (Augment, Cuboid {x = Segment (-20, 26), y = Segment (- 36, 17), z = Segment (- 47, 7)})
       it "should return the reboot step with function augment" $ do
         show actual `shouldBe`
-          "RebootStep (Augment,Cuboid [(-20,26),(-36,17),(-47,7)])"
+          "RebootStep (Augment,Cuboid {x = (-20,26), y = (-36,17), z = (-47,7)})"
     where actual = parseLine (T.pack "on x=-20..26,y=-36..17,z=-47..7")
 
   -- describe "setAdd" $ do

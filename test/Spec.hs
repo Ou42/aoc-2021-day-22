@@ -10,33 +10,39 @@ import Cuboid(Cuboid(..), nextSegment)
 import Segment(Segment(..))
 import RebootStep(RebootStep(..), RebootOperator(..), parseLine)
 
+{- HLINT ignore -}
+
 main :: IO ()
 main = hspec spec
 
+actualRebootStepFor :: String -> RebootStep
+actualRebootStepFor combiner = parseLine $ T.pack $ combiner ++ " x=-20..26,y=-36..17,z=-47..7"
+
 spec :: Spec
-spec =
-  -- describe "Parsing input line" $ do
-  --   context "parseLine for '+'" $ do
-  --     it "directly check the 'RebootStep' constructor" $ do
-  --       actual `shouldBe`
-  --         RebootStep (Augment, Cuboid {x = Segment (-20, 26), y = Segment (- 36, 17), z = Segment (- 47, 7)})
-  --     it "should return the reboot step with function augment" $ do
-  --       show actual `shouldBe`
-  --         "RebootStep (Augment,Cuboid {x = (-20,26), y = (-36,17), z = (-47,7)})"
-  --   where actual = parseLine (T.pack "on x=-20..26,y=-36..17,z=-47..7")
+spec = do
+  describe "parseLine" $ do
+    context "with 'off' combiner" $ do
+      it "directly checks the 'RebootStep' constructor for reduce" $ do
+        (actualRebootStepFor "off") `shouldBe` -- ignore hlint
+          RebootStep (Reduce, Cuboid {x = Segment (-20, 26), y = Segment (- 36, 17), z = Segment (- 47, 7)})
+    context "with 'on' combiner" $ do
+      it "directly checks the 'RebootStep' constructor for augment" $ do
+        (actualRebootStepFor "on") `shouldBe` -- ignore hlint
+          RebootStep (Augment, Cuboid {x = Segment (-20, 26), y = Segment (-36, 17), z = Segment (-47, 7)})
+      it "returns the reboot step with function augment" $ do
+        (show $ actualRebootStepFor "on") `shouldBe` -- ignore hlint
+          "RebootStep (Augment,Cuboid {x = (-20,26), y = (-36,17), z = (-47,7)})"
   describe "Cuboid functionality" $ do
+    let c = Cuboid { x = Segment (1, 2), y = Segment (3, 4), z = Segment (5, 6)  }
     context "next segment in cuboid" $ do
       it "returns y for x" $ do
-        y c `shouldBe` nextSegment x_ c
+        nextSegment (x c) c `shouldBe` (y c)
       it "returns z for y" $ do
-        z c `shouldBe` nextSegment y_ c
+        nextSegment (y c) c `shouldBe` (z c)
       it "returns y for x" $ do
-        x c `shouldBe` nextSegment z_ c
-    where
-      x_ = Segment (1, 2)
-      y_ = Segment (3, 4)
-      z_ = Segment (5, 6)
-      c = Cuboid { x = x_, y = y_, z = z_  }
+        nextSegment (z c) c `shouldBe` (x c)
+
+
 
   -- describe "setAdd" $ do
   --   context "cuboids do not overlap" $

@@ -9,6 +9,7 @@ import qualified Data.Text as T
 import Cuboid(Cuboid(..), nextSegment)
 import Segment(Segment(..))
 import RebootStep(RebootStep(..), RebootOperator(..), parseLine)
+import SegmentSpec
 
 main :: IO ()
 main = hspec spec

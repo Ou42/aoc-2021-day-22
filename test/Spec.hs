@@ -1,5 +1,5 @@
-{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
+{- HLINT ignore -}
 
 module Main where
 
@@ -9,8 +9,6 @@ import qualified Data.Text as T
 import Cuboid(Cuboid(..), nextSegment)
 import Segment(Segment(..))
 import RebootStep(RebootStep(..), RebootOperator(..), parseLine)
-
-{- HLINT ignore -}
 
 main :: IO ()
 main = hspec spec
@@ -41,20 +39,3 @@ spec = do
         nextSegment (y c) c `shouldBe` (z c)
       it "returns y for x" $ do
         nextSegment (z c) c `shouldBe` (x c)
-
-
-
-  -- describe "setAdd" $ do
-  --   context "cuboids do not overlap" $
-  --     it "should return list containing the two cuboids" $
-  --       1 + 2 `shouldBe` 3
-
-    -- addCuboids ( Cuboid (1,2) (3,4) (5,6)) (Cuboid (10,11) (12,13) (14,15))
-    --   `shouldBe` [ Cuboid (1,2) (3,4) (5,6), Cuboid (10,11) (12,13) (14,15) ]
-    -- context "larger cuboid completely contains other cuboid"
-    --   it "should return list containing the larger cuboid only"
-    --     addCuboids (Cuboid (2,3) (2,3) (2,3)) (Cuboid (1,4) (1,4) (1,4))
-    --       `shouldBe` [ Cuboid (1,4) (1,4) (1,4 )]
-    -- context "cuboids overlaps 2 edges"
-    -- context "cuboids overlaps 3 edges"
-

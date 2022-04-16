@@ -18,9 +18,9 @@ volume c = 0 -- TODO
 
 nextSegment :: Segment -> Cuboid -> Segment
 nextSegment seg cb
-  | (x cb) == seg = (y cb)
-  | (y cb) == seg = (z cb)
-  | (z cb) == seg = (x cb)
+  | x cb == seg = y cb
+  | y cb == seg = z cb
+  | z cb == seg = x cb
 
 {- "x=-20..26,y=-36..17,z=-47..7" -}
 parseCuboid :: T.Text -> Cuboid

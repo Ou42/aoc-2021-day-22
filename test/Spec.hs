@@ -14,6 +14,6 @@ main = hspec spec
 spec :: Spec
 spec = do
   -- describe "Cuboid" $ do cuboidSpec
-  -- describe "Segment" $ do segmentSpec
+  describe "Segment" $ do segmentSpec
   -- describe "SegmentTest" $ do segmentTestSpec
   describe "RebootStep" $ do rebootStepSpec

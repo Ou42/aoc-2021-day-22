@@ -8,55 +8,64 @@ import Utils (readInt, toTuple)
 
 newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 
+{- How arguments to compareSegments are passed
+-}
+
+newtype Source = Source (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
+newtype Target = Target (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
+
 {- Roles played by Segments returned by ResultType
 -}
-type TargetAdjacentLeft = Segment -- The adjacent segment to the left of the source segment.
-type TargetAdjacentRight = Segment -- The adjacent segment to the right of the source segment.
+-- The adjacent segment to the left of the source segment.
+newtype TargetAdjacentLeft  = TargetAdjacentLeft  Target deriving (Eq, Ord, Show)
+ -- The adjacent segment to the right of the source segment.
+newtype TargetAdjacentRight = TargetAdjacentRight Target deriving (Eq, Ord, Show)
 
 {- | The catagories of results from combining two Segments together
    |
 -}
 data ResultType
-  = NonIntersecting
+  {- | The two segments do not intersect at all
+  -}
+  = NoOverlap
 
-    {- | OverlapsTargetLeft
-       |
-       |                   ///////----- target ------
-       |     ---- source ---------
-    -}
+  {- | OverlapsTargetLeft
+     |
+     |                   ///////----- target ------
+     |     ---- source ---------
+  -}
   | OverlapsTargetLeft TargetAdjacentRight
 
-    {- | OverlapsTargetRight
-       |
-       |     ----- target -----/////////
-       |                       -------------- source ------
-    -}
+  {- | OverlapsTargetRight
+     |
+     |     ----- target -----/////////
+     |                       -------------- source ------
+  -}
   | OverlapsTargetRight TargetAdjacentLeft
 
-    {- | OverlapsTarget
-       |
-       |          /////// target ///////
-       |     -------------- source -----------------
-    -}
+  {- | OverlapsTarget
+     |
+     |          /////// target ///////
+     |     -------------- source -----------------
+  -}
   | OverlapsTarget -- Doesn't return anything
 
-    {- | OverlappedByTarget
-       |
-       |     -----//////// target //////-----------
-       |          ------- source -------
-    -}
+  {- | OverlappedByTarget
+     |
+     |     -----//////// target //////-----------
+     |          ------- source -------
+  -}
   | OverlappedByTarget TargetAdjacentLeft TargetAdjacentRight -- targetAdjacentLeft targetAdjacentRight
 
-compareSegments :: Segment -> Segment -> ResultType
-compareSegments source target = undefined
+  deriving (Eq, Ord, Show)
 
-augment :: Segment -> Segment -> [Segment]
-augment s1 s2 =
-  undefined
-
-reduce :: Segment -> Segment -> [Segment]
-reduce s1 s2 =
-  undefined
+{- Important axiom: a segment's slope must not be negative
+-}
+compareSegments :: Source -> Target -> ResultType
+compareSegments (Source(s1, s2)) (Target (t1, t2))
+  | s2 < t1 = NoOverlap
+  | s1 <= t1 && s2 >= t1 && s2 <= t2 = OverlapsTargetLeft (TargetAdjacentRight $ Target (s2 + 1, t2))
+  | otherwise = undefined
 
 {- | Rendering -}
 

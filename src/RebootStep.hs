@@ -4,12 +4,12 @@ module RebootStep where
 
 import qualified Data.Text as T
 
-import Cuboid (Cuboid, parseCuboid)
+import Cuboid (Source, parseSource)
 import Remnant (Remnant)
 
 {- | The information parsed from each line in the Day-22 exercise input file
  -}
-newtype RebootStep = RebootStep (RebootOperator,Cuboid) deriving (Eq, Show)
+newtype RebootStep = RebootStep (RebootOperator,Source) deriving (Eq, Show)
 
 {- | Parse the exercise's input file contents to a list of reboot steps.
    |
@@ -32,7 +32,7 @@ parseLine line =
       mapTopTuple :: [T.Text] -> RebootStep
       mapTopTuple (combine:(cuboidStr:remainder)) =
          RebootStep ( if combine == "on" then Augment else Reduce
-                    , parseCuboid cuboidStr
+                    , parseSource cuboidStr
                     )
 
 generateRemnant :: [RebootStep] -> Remnant
@@ -48,5 +48,5 @@ data RebootOperator = Augment | Reduce deriving (Eq, Show)
    |
    | 1. The `rebootStep` must always precede the `target`'s `RebootStep` in the `RebootSteps`' list.
 -}
-applyReboot :: RebootStep -> Cuboid -> Remnant
+applyReboot :: RebootStep -> Target -> Remnant
 applyReboot rebootStep target = [] -- TODO

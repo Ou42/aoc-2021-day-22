@@ -5,30 +5,28 @@ module Cuboid where
 
 import qualified Data.Text as T
 
-import Segment (Segment(..), toSegment)
+import Segment (Segment(..), SrcSeg(..), TrgSeg(..), toSrcSeg)
 
-data Cuboid = Cuboid
-  { x :: Segment
-  , y :: Segment
-  , z :: Segment
+data Source = Source
+  { x :: SrcSeg
+  , y :: SrcSeg
+  , z :: SrcSeg
   } deriving (Eq, Show)
 
-volume :: Cuboid -> Int
+data Target = Target
+  { x :: TrgSeg
+  , y :: TrgSeg
+  , z :: TrgSeg
+  } deriving (Eq, Show)
+
+volume :: Target -> Int
 volume c = 0 -- TODO
 
-{- I'm pretty sure I don't need to do this
-nextSegment :: Segment -> Cuboid -> Segment
-nextSegment seg cb
-  | x cb == seg = y cb
-  | y cb == seg = z cb
-  | z cb == seg = x cb
--}
-
 {- "x=-20..26,y=-36..17,z=-47..7" -}
-parseCuboid :: T.Text -> Cuboid
-parseCuboid str =
+parseSource :: T.Text -> Source
+parseSource str =
   let
     xyz = T.splitOn "," str
-    [x,y,z] = map (toSegment . last . T.splitOn "=") xyz
+    [x,y,z] = map (toSrcSeg . last . T.splitOn "=") xyz
   in
-    Cuboid { x, y, z }
+    Source { x, y, z }

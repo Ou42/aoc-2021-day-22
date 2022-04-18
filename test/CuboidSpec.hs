@@ -4,10 +4,12 @@ module CuboidSpec where
 
 import Test.Hspec
 
-import Cuboid (Cuboid(..), nextSegment)
+import Cuboid (Cuboid(..))
 import Segment (Segment(..))
 
 -- import SegmentTest (areSame, targetIsAdjacentLeft, targetIsAdjacentRight)
+
+{- Probably don't need this
 
 cuboidSpec =
   describe "Cuboid functionality" $ do
@@ -19,3 +21,4 @@ cuboidSpec =
         nextSegment (y c) c `shouldBe` (z c)
       it "returns y for x" $ do
         nextSegment (z c) c `shouldBe` (x c)
+-}

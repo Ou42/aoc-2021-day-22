@@ -1,35 +1,10 @@
-{- HLINT ignore -}
-
 module SegmentSpec where
 
 import Test.Hspec
 
-import Segment (ResultType(..), Segment(..), augment, compareSegments, reduce)
-import SegmentTest (areSame, targetIsAdjacentLeft, targetIsAdjacentRight)
+import Segment (ResultType(..), Segment(..))
 
 segmentSpec =
-  describe "Segment overlap predicates" $ do
-    describe "areSame" $ do
-
-      it "should verify segments are not same" $ do
-        pending
-
-      it "should verify segments are same" $ do
-        pending
-
-    describe "targetIsAdjacentLeft" $ do
-
-      it "is true" $ do
-        pending
-
-      it "is false" $ do
-        pending
-
-    describe "targetIsAdjacentRight" $ do
-
-      it "is true" $ do
-        pending
-
-      it "is false" $ do
-        pending
-
+  describe "Segment tests" $ do
+    it "should do stuff" $ do
+      pending

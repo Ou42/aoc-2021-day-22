@@ -19,28 +19,28 @@ data ResultType
        |                   ///////----- target ------
        |     ---- source ---------
     -}
-  | OverlapsTargetLeft
+  | OverlapsTargetLeft Segment -- targetAdjacentRight
 
     {- | OverlapsTargetRight
        |
        |     ----- target -----/////////
        |                       -------------- source ------
     -}
-  | OverlapsTargetRight
+  | OverlapsTargetRight Segment -- targetAdjacentLeft
 
     {- | OverlapsTarget
        |
        |          /////// target ///////
        |     -------------- source -----------------
     -}
-  | OverlapsTarget
+  | OverlapsTarget Segment -- target
 
     {- | EncompassedByTarget
        |
        |     -----//////// target //////-----------
        |          ------- source -------
     -}
-  | EncompassedByTarget
+  | EncompassedByTarget Segment Segment -- targetAdjacentLeft targetAdjacentRight
 
 compareSegments :: Segment -> Segment -> ResultType
 compareSegments source target = undefined

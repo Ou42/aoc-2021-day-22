@@ -27,3 +27,7 @@ segmentSpec =
       compareSegments (Source (5, 15)) (Target (8, 10))
         `shouldBe`
           OverlapsTarget
+    it "detects target completely overlaps source" $ do
+      compareSegments (Source (8, 10)) (Target (5, 15))
+        `shouldBe`
+          OverlappedByTarget (TargetAdjacentLeft (Target (5, 7))) (TargetAdjacentRight (Target (11,15)))

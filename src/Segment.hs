@@ -63,10 +63,16 @@ data ResultType
 -}
 compareSegments :: Source -> Target -> ResultType
 compareSegments (Source(s1, s2)) (Target (t1, t2))
-  | s2 < t1 = NoOverlap
-  | s1 <= t1 && s2 >= t1 && s2 <= t2 = OverlapsTargetLeft (TargetAdjacentRight $ Target (s2 + 1, t2))
-  | s1 > t1 && s2 >= t2 = OverlapsTargetRight (TargetAdjacentLeft $ Target (t1, s1 - 1))
-  | s1 <= t1 && s2 >= t1 = OverlapsTarget
+  | s2 < t1 =
+      NoOverlap
+  | s1 <= t1 && s2 >= t1 && s2 <= t2 =
+      OverlapsTargetLeft (TargetAdjacentRight $ Target (s2 + 1, t2))
+  | s1 > t1 && s2 >= t2 =
+      OverlapsTargetRight (TargetAdjacentLeft $ Target (t1, s1 - 1))
+  | s1 <= t1 && s2 >= t1 =
+      OverlapsTarget
+  | t1 < s1 && s2 < t2 =
+      OverlappedByTarget (TargetAdjacentLeft $ Target (t1, s1 - 1)) (TargetAdjacentRight $ Target (s2 + 1, t2))
   | otherwise = undefined
 
 {- | Rendering -}

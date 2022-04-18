@@ -8,6 +8,11 @@ import Utils (readInt, toTuple)
 
 newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 
+{- Roles played by Segments returned by ResultType
+-}
+type TargetAdjacentLeft = Segment -- The adjacent segment to the left of the source segment.
+type TargetAdjacentRight = Segment -- The adjacent segment to the right of the source segment.
+
 {- | The catagories of results from combining two Segments together
    |
 -}
@@ -19,28 +24,28 @@ data ResultType
        |                   ///////----- target ------
        |     ---- source ---------
     -}
-  | OverlapsTargetLeft Segment -- targetAdjacentRight
+  | OverlapsTargetLeft TargetAdjacentRight
 
     {- | OverlapsTargetRight
        |
        |     ----- target -----/////////
        |                       -------------- source ------
     -}
-  | OverlapsTargetRight Segment -- targetAdjacentLeft
+  | OverlapsTargetRight TargetAdjacentLeft
 
     {- | OverlapsTarget
        |
        |          /////// target ///////
        |     -------------- source -----------------
     -}
-  | OverlapsTarget Segment -- target
+  | OverlapsTarget -- Doesn't return anything
 
-    {- | EncompassedByTarget
+    {- | OverlappedByTarget
        |
        |     -----//////// target //////-----------
        |          ------- source -------
     -}
-  | EncompassedByTarget Segment Segment -- targetAdjacentLeft targetAdjacentRight
+  | OverlappedByTarget TargetAdjacentLeft TargetAdjacentRight -- targetAdjacentLeft targetAdjacentRight
 
 compareSegments :: Segment -> Segment -> ResultType
 compareSegments source target = undefined

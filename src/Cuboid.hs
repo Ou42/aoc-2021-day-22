@@ -5,12 +5,12 @@ module Cuboid where
 
 import qualified Data.Text as T
 
-import Segment (Segment(..), SrcSeg(..), TrgSeg(..), toSrcSeg)
+import Segment (Segment(..), SrcSeg(..), TrgSeg(..), convert, toSrcSeg)
 
 data Source = Source
-  { x :: SrcSeg
-  , y :: SrcSeg
-  , z :: SrcSeg
+  { xSrc :: SrcSeg
+  , ySrc :: SrcSeg
+  , zSrc :: SrcSeg
   } deriving (Eq, Show)
 
 data Target = Target
@@ -18,6 +18,15 @@ data Target = Target
   , y :: TrgSeg
   , z :: TrgSeg
   } deriving (Eq, Show)
+
+copy :: Source -> Target
+copy source =
+  Target
+    { x = convert ( xSrc source )
+    , y = convert ( ySrc source )
+    , z = convert ( zSrc source )
+    }
+
 
 volume :: Target -> Int
 volume c = 0 -- TODO
@@ -27,6 +36,6 @@ parseSource :: T.Text -> Source
 parseSource str =
   let
     xyz = T.splitOn "," str
-    [x,y,z] = map (toSrcSeg . last . T.splitOn "=") xyz
+    [xSrc,ySrc,zSrc] = map (toSrcSeg . last . T.splitOn "=") xyz
   in
-    Source { x, y, z }
+    Source { xSrc, ySrc, zSrc }

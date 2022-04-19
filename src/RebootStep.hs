@@ -4,7 +4,7 @@ module RebootStep where
 
 import qualified Data.Text as T
 
-import Cuboid (Source, parseSource)
+import Cuboid (Source, Target, parseSource)
 import Remnant (Remnant)
 
 {- | The information parsed from each line in the Day-22 exercise input file

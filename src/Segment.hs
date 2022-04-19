@@ -75,6 +75,12 @@ compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
       OverlappedByTarget (TargetAdjacentLeft $ TrgSeg (t1, s1 - 1)) (TargetAdjacentRight $ TrgSeg (s2 + 1, t2))
   | otherwise = undefined
 
+{-| Convert SrcSeg to TrgSeg
+-}
+convert :: SrcSeg -> TrgSeg
+convert (SrcSeg (start, end)) =
+  TrgSeg (start, end)
+
 {- | Rendering -}
 
 instance Show SrcSeg where

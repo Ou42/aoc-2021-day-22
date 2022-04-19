@@ -8,7 +8,6 @@ import Segment ( ResultType(..)
                , TrgSeg(..)
                , TargetAdjacentLeft(..)
                , TargetAdjacentRight(..)
-               , toSegment
                , compareSegments
                )
 

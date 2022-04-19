@@ -7,23 +7,21 @@ import Cuboid (Source(..), Target(..))
 -}
 type Remnant = [ Target ]
 
-{- | return the first Cuboid and the remnant
-   | of the second Cuboid.
-   |
-   | Properties
-   |
-   | 1. The combined volumes of the remnant == combined volumes of the 1st cuboid and the 2nd cuboid
-   |    minus their intersection
--}
-augment :: Source -> Target -> Remnant
-augment source target = [] -- TODO
+reduceRemnantUsingSource :: Remnant -> Source -> Remnant
+reduceRemnantUsingSource previousRemnant source =
+   foldl prepareReduce [] previousRemnant
+   where
+      prepareReduce :: Remnant -> Target -> Remnant
+      prepareReduce targetRemnant target =
+         reduce targetRemnant source target
 
-{- | return the remnant of subtracting the first
-   | Cuboid from the second.
+{- | If there are any adjacent targets resulting from reducing
+   | the current target from the source, then add them to the
+   | remnant
    |
    | Properties:
    |
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
-reduce :: Source -> Target -> Remnant
-reduce source target = [] -- TODO
+reduce :: Remnant -> Source -> Target -> Remnant
+reduce remnant source target = undefined

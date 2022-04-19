@@ -4,8 +4,8 @@ module RebootStep where
 
 import qualified Data.Text as T
 
-import Cuboid (Source, Target, parseSource)
-import Remnant (Remnant)
+import Cuboid (Source, Target, convertFromSourceToTarget, parseSource)
+import Remnant (Remnant, reduceRemnantUsingSource)
 
 {- | The information parsed from each line in the Day-22 exercise input file
  -}
@@ -35,10 +35,34 @@ parseLine line =
                     , parseSource cuboidStr
                     )
 
+{- | Generate the remnant of non-overlapping target cuboids
+   | from the list of source cuboids from each reboot step.
+-}
 generateRemnant :: [RebootStep] -> Remnant
-generateRemnant rbs = [] -- TODO
+generateRemnant = foldl accumulateRemnantFromRebootStep []
 
-{- Selects the function to implement the combining of the source and target cuboids
+{- | For the current reboot step, generate the remnant of
+   | cuboids for this reboot step
+   | plus the incoming remnant generated from processing
+   | the previous reboot steps' source cuboids.  I.e.
+   | this has been recursive.
+   |
+   | At the end, if this
+   | reboot step is augmenting, then add the current source
+   | cuboid to the remnant; otherwise, this is a reducing
+   | cuboid and it makes no sense to add such to the remnant
+   | because its volume is irrelevant.
+-}
+accumulateRemnantFromRebootStep :: Remnant -> RebootStep -> Remnant
+accumulateRemnantFromRebootStep inputRemnant (RebootStep (rebootOperator, source)) =
+   let
+      outputRemnant = reduceRemnantUsingSource inputRemnant source
+   in
+      if rebootOperator == Augment
+      then convertFromSourceToTarget source : outputRemnant
+      else outputRemnant
+
+{- | Selects the function to implement the combining of the source and target cuboids
 -}
 data RebootOperator = Augment | Reduce deriving (Eq, Show)
 

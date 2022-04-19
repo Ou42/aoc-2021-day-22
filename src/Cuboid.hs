@@ -19,8 +19,8 @@ data Target = Target
   , z :: TrgSeg
   } deriving (Eq, Show)
 
-copy :: Source -> Target
-copy source =
+convertFromSourceToTarget :: Source -> Target
+convertFromSourceToTarget source =
   Target
     { x = convert ( xSrc source )
     , y = convert ( ySrc source )

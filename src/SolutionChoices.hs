@@ -4,7 +4,7 @@ module SolutionChoices where
 
 import Cuboid (volume)
 import RebootStep (generateRemnant, parseInputText)
-import Remnant (Remnant, augment, reduce)
+import Remnant (Remnant)
 import qualified RunningCode as RC
 
 data Implementation = Implementation

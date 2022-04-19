@@ -81,6 +81,7 @@ test-suite aoc2021-day22-test
   other-modules:
       CuboidSpec
       RebootStepSpec
+      RemnantSpec
       SegmentSpec
       SegmentTest
       SegmentTestSpec

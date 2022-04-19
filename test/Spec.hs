@@ -5,6 +5,7 @@ import qualified Data.Text as T
 
 import CuboidSpec()
 import RebootStepSpec (rebootStepSpec)
+import RemnantSpec (remnantSpec)
 import SegmentSpec (segmentSpec)
 import SegmentTestSpec (segmentTestSpec)
 
@@ -17,3 +18,4 @@ spec = do
   describe "Segment" $ do segmentSpec
   -- describe "SegmentTest" $ do segmentTestSpec
   describe "RebootStep" $ do rebootStepSpec
+  describe "Remnant" $ do remnantSpec

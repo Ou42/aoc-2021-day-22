@@ -81,5 +81,5 @@ faces = [[1, 2, 4, 3]
 -- f [2, 4, 8, 6]
 
 
-main = do
-    putStrLn "hello, world!"
+-- main = do
+--     putStrLn "hello, world!"

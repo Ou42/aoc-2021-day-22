@@ -34,10 +34,8 @@ reduceRemnantUsingSource previousRemnant source =
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
 reduce remnant source target
-   {-- | any (elem NoOverlap) allR = [target] -}
    | NoOverlap `elem` allR = [target]
    | all (== OverlapsTarget) allR = []
-   {-- had to change the otherwise results as it was the same as all OverlapsTarget -}
    | otherwise = [Target { x = TrgSeg (-1, -1), y = TrgSeg (-1, -1), z = TrgSeg (-1, -1) }]
    where
       xr = compareSegments (xSrc source) (x target)

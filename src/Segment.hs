@@ -17,9 +17,12 @@ newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 {- | Roles played by Segments returned by ResultType
 -}
 -- | The adjacent segment to the left of the source segment.
-newtype TargetAdjacentLeft  = TargetAdjacentLeft  TrgSeg deriving (Eq, Ord, Show)
+newtype AdjLeft  = AdjLeft  TrgSeg deriving (Eq, Ord, Show)
 -- | The adjacent segment to the right of the source segment.
-newtype TargetAdjacentRight = TargetAdjacentRight TrgSeg deriving (Eq, Ord, Show)
+newtype AdjRight = AdjRight TrgSeg deriving (Eq, Ord, Show)
+
+-- | The segment that defines the overlap over the source and target segments
+newtype Overlap = Overlap TrgSeg deriving (Eq, Ord, Show)
 
 {- | The catagories of results from combining two Segments together
    |
@@ -29,33 +32,33 @@ data ResultType
   -}
   = NoOverlap
 
-  {- | OverlapsTargetLeft
+  {- | OverlapsLeft
      |
      |                   ///////----- target ------
      |     ---- source ---------
   -}
-  | OverlapsTargetLeft TargetAdjacentRight
+  | OverlapsLeft Overlap AdjRight
 
-  {- | OverlapsTargetRight
+  {- | OverlapsRight
      |
      |     ----- target -----/////////
      |                       -------------- source ------
   -}
-  | OverlapsTargetRight TargetAdjacentLeft
+  | OverlapsRight AdjLeft -- Overlap
 
-  {- | OverlapsTarget
+  {- | Overlaps
      |
      |          /////// target ///////
      |     -------------- source -----------------
   -}
-  | OverlapsTarget -- Doesn't return anything
+  | Overlaps -- Doesn't return anything
 
   {- | OverlappedByTarget
      |
      |     -----//////// target //////-----------
      |          ------- source -------
   -}
-  | OverlappedByTarget TargetAdjacentLeft TargetAdjacentRight
+  | OverlappedByTarget AdjLeft {- Overlap -} AdjRight -- AdjLeft
 
   deriving (Eq, Ord, Show)
 
@@ -66,13 +69,15 @@ compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
   | s2 < t1 =
       NoOverlap
   | s1 <= t1 && s2 >= t1 && s2 <= t2 =
-      OverlapsTargetLeft (TargetAdjacentRight $ TrgSeg (s2 + 1, t2))
+      OverlapsLeft
+         (Overlap $ TrgSeg (t1, s2))           --                   ///////----- target ------
+         (AdjRight $ TrgSeg (s2 + 1, t2)) --     ---- source ---------
   | s1 > t1 && s2 >= t2 =
-      OverlapsTargetRight (TargetAdjacentLeft $ TrgSeg (t1, s1 - 1))
+      OverlapsRight (AdjLeft $ TrgSeg (t1, s1 - 1))
   | s1 <= t1 && s2 >= t1 =
-      OverlapsTarget
+      Overlaps
   | t1 < s1 && s2 < t2 =
-      OverlappedByTarget (TargetAdjacentLeft $ TrgSeg (t1, s1 - 1)) (TargetAdjacentRight $ TrgSeg (s2 + 1, t2))
+      OverlappedByTarget (AdjLeft $ TrgSeg (t1, s1 - 1)) (AdjRight $ TrgSeg (s2 + 1, t2))
   | otherwise = undefined
 
 {-| Convert SrcSeg to TrgSeg

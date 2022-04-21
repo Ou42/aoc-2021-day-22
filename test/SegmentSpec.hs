@@ -38,4 +38,4 @@ segmentSpec =
             OverlappedByTarget
               (AdjLeft (TrgSeg (5, 7)))
               (Overlap (TrgSeg (8, 10)))
-              (AdjRight (TrgSeg (11,15)))
+              (AdjRight (TrgSeg (11, 15)))

@@ -46,9 +46,10 @@ reduce remnant source target =
       let
          axesWithAdjacencies = filter (not . resultType Overlaps) compares
       in
-      foldl accumulateNonAdjacentTargets remnant axesWithAdjacencies
+      foldl accumulateNonAdjacentTargets (target, remnant) axesWithAdjacencies
 
-accumulateNonAdjacentTargets :: Remnant -> Compare -> Remnant
-accumulateNonAdjacentTargets remnant axisWithAdjacencies =
+{- | generate the adjacent target cuboids from the compare -}
+accumulateNonAdjacentTargets :: (Target, Remnant) -> Compare -> (Target, Remnant)
+accumulateNonAdjacentTargets (target, remnant) axisWithAdjacencies =
    undefined
 

@@ -37,5 +37,20 @@ remnantSpec =
           target2
         `shouldBe`
           []
+    describe "Test compare where source and target intersect to generated adjacents" $ do
+      let srcSeg40 = SrcSeg (-40, 40)
+      let srcSeg18 = SrcSeg (-18, 18)
+      let srcSeg50 = SrcSeg (-50, 50)
+      let trgSeg10 = TrgSeg (-10, 10)
+      let trgSegIntersects = TrgSeg (-15, 25)
+      let trgSeg30 = TrgSeg (-30, 30)
+      let source = Source {xSrc = srcSeg40, ySrc = srcSeg18, zSrc = srcSeg50}
+      let target = Target {x = trgSeg10, y = trgSegIntersects, z = trgSeg30}
+      context "intersecting only on one axis" $ do
+        it "the number of adjacent targets" $ do
+          accumulateNonAdjacentTargets []
+
+
+
 
 

@@ -45,3 +45,4 @@ resultType desiredResultType compare =
 forAxis :: Axis -> Compare -> Bool
 forAxis desiredAxis compare =
    desiredAxis == fst compare
+

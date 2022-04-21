@@ -3,7 +3,7 @@ module Main where
 import Test.Hspec
 import qualified Data.Text as T
 
-import CuboidSpec()
+import CompareCuboidsSpec (compareCuboidsSpec)
 import RebootStepSpec (rebootStepSpec)
 import RemnantSpec (remnantSpec)
 import SegmentSpec (segmentSpec)
@@ -17,5 +17,6 @@ spec = do
   -- describe "Cuboid" $ do cuboidSpec
   describe "Segment" $ do segmentSpec
   -- describe "SegmentTest" $ do segmentTestSpec
+  describe "CompareCuboids" $ do compareCuboidsSpec
   describe "RebootStep" $ do rebootStepSpec
   describe "Remnant" $ do remnantSpec

@@ -81,6 +81,7 @@ test-suite aoc2021-day22-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      CompareCuboidsSpec
       CuboidSpec
       RebootStepSpec
       RemnantSpec

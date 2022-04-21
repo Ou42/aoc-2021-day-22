@@ -14,11 +14,11 @@ newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 
-{- Roles played by Segments returned by ResultType
+{- | Roles played by Segments returned by ResultType
 -}
--- The adjacent segment to the left of the source segment.
+-- | The adjacent segment to the left of the source segment.
 newtype TargetAdjacentLeft  = TargetAdjacentLeft  TrgSeg deriving (Eq, Ord, Show)
- -- The adjacent segment to the right of the source segment.
+-- | The adjacent segment to the right of the source segment.
 newtype TargetAdjacentRight = TargetAdjacentRight TrgSeg deriving (Eq, Ord, Show)
 
 {- | The catagories of results from combining two Segments together

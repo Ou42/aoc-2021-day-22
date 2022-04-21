@@ -1,5 +1,8 @@
+-- {-# LANGUAGE NamedFieldPuns #-}
+
 module Remnant where
 
+import CompareCuboids (mkCompareCuboids, resultType)
 import Cuboid (Source(..), Target(..))
 import Segment ( ResultType(..)
                , Segment(..)
@@ -33,16 +36,12 @@ reduceRemnantUsingSource previousRemnant source =
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
-reduce remnant source target
-   | NoOverlap `elem` allR =
+reduce remnant source target =
+   let
+      compares = mkCompareCuboids source target
+   in
+   if any (resultType NoOverlap) compares then
       target : remnant
-   | all (== OverlapsTarget) allR =
+   else
       remnant
-   | otherwise =
-      (Target { x = TrgSeg (-1, -1), y = TrgSeg (-1, -1), z = TrgSeg (-1, -1) }) : remnant
-   where
-      xr = compareSegments (xSrc source) (x target)
-      yr = compareSegments (ySrc source) (y target)
-      zr = compareSegments (zSrc source) (z target)
-      allR = [xr, yr, zr]
 

@@ -3,7 +3,7 @@ module SegmentSpec where
 import Test.Hspec
 
 import Segment ( Overlap (..)
-               , ResultType(..)
+               , AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)

@@ -2,15 +2,11 @@ module CompareCuboidsSpec where
 
 import Test.Hspec
 
-import CompareCuboids ( Axis(..)
-                      , Compare
-                      , Compares
-                      , forAxis
-                      , mkCompareCuboids
-                      , resultType
+import CompareCuboids ( AxisResults
+                      , mkAxisResults
                       )
 import Cuboid (Source(..), Target(..))
-import Segment ( ResultType(..)
+import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)

@@ -2,9 +2,9 @@
 
 module Remnant where
 
-import CompareCuboids (Compare, mkCompareCuboids, resultType)
+import CompareCuboids (mkAxisResults)
 import Cuboid (Source(..), Target(..))
-import Segment ( ResultType(..)
+import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
@@ -38,18 +38,18 @@ reduceRemnantUsingSource previousRemnant source =
 reduce :: Remnant -> Source -> Target -> Remnant
 reduce remnant source target =
    let
-      compares = mkCompareCuboids source target
+      axisResults = mkAxisResults source target
    in
-   if any (resultType NoOverlap) compares then
+   if NoOverlap `elem` axisResults then
       target : remnant
    else
       let
-         axesWithAdjacencies = filter (not . resultType Overlaps) compares
+         axesWithAdjacencies = filter (/= Overlaps) axisResults
       in
-      foldl accumulateNonAdjacentTargets (target, remnant) axesWithAdjacencies
+      snd $ foldl accumulateNonAdjacentTargets (target, remnant) axesWithAdjacencies
 
 {- | generate the adjacent target cuboids from the compare -}
-accumulateNonAdjacentTargets :: (Target, Remnant) -> Compare -> (Target, Remnant)
+accumulateNonAdjacentTargets :: (Target, Remnant) -> AxisResult -> (Target, Remnant)
 accumulateNonAdjacentTargets (target, remnant) axisWithAdjacencies =
-   undefined
+   undefined -- generate adjacent cuboids
 

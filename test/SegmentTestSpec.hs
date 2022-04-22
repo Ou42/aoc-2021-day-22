@@ -4,7 +4,7 @@ module SegmentTestSpec where
 
 import Test.Hspec
 
-import Segment (ResultType(..), Segment(..), compareSegments)
+import Segment (AxisResult(..), Segment(..), compareSegments)
 import SegmentTest (areSame, targetIsAdjacentLeft, targetIsAdjacentRight)
 
 segmentTestSpec =

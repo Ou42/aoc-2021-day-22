@@ -6,7 +6,7 @@ module CompareCuboids where
    | the comparison.
 -}
 import Cuboid (Source(..), Target(..))
-import Segment ( ResultType(..)
+import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
@@ -15,34 +15,12 @@ import Segment ( ResultType(..)
                , compareSegments
                )
 
-type Compares = [Compare]
+type AxisResults = [AxisResult]
 
-type Compare = (Axis, ResultType)
-
-data Axis
-   = X
-   | Y
-   | Z
-   deriving (Eq, Ord, Show)
-
-mkCompareCuboids :: Source -> Target -> Compares
-mkCompareCuboids source target =
-  let
-      xr = (X, compareSegments (xSrc source) (x target))
-      yr = (Y, compareSegments (ySrc source) (y target))
-      zr = (Z, compareSegments (zSrc source) (z target))
-  in
-      [xr, yr, zr ]
-
-{- A predicate for a desired comparison result
--}
-resultType :: ResultType -> Compare -> Bool
-resultType desiredResultType compare =
-   desiredResultType == snd compare
-
-{- A predicate for a segment comparison for a specific axis
--}
-forAxis :: Axis -> Compare -> Bool
-forAxis desiredAxis compare =
-   desiredAxis == fst compare
+mkAxisResults :: Source -> Target -> AxisResults
+mkAxisResults (Source sx sy sz) (Target tx ty tz) =
+   [ compareSegments sx tx
+   , compareSegments sy ty
+   , compareSegments sz tz
+   ]
 

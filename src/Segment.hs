@@ -14,7 +14,7 @@ newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 
-{- | Roles played by Segments returned by ResultType
+{- | Roles played by Segments returned by AxisResult
 -}
 -- | The adjacent segment to the left of the source segment.
 newtype AdjLeft  = AdjLeft  TrgSeg deriving (Eq, Ord, Show)
@@ -26,8 +26,10 @@ newtype Overlap = Overlap TrgSeg deriving (Eq, Ord, Show)
 
 {- | The catagories of results from combining two Segments together
    |
+   | We're calling it an AxisResult because a segment-pair comprises the dimension
+   | of one of the cuboid's sides.
 -}
-data ResultType
+data AxisResult
   {- | The two segments do not intersect at all
   -}
   = NoOverlap
@@ -64,7 +66,7 @@ data ResultType
 
 {- Important axiom: a segment's slope must not be negative
 -}
-compareSegments :: SrcSeg -> TrgSeg -> ResultType
+compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
   | s2 < t1 =
       NoOverlap

@@ -54,10 +54,10 @@ reduce remnant source target =
 accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
 accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
    case axisResult of
-      -- OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
-      --    (createPiece target axisOffset overlap
-      --       , createPiece target axisOffset adjRight : remnant
-      --       , axisOffset + 1)
+      OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
+         (createPiece target axisOffset overlap
+            , createPiece target axisOffset adjRight : remnant
+            , axisOffset + 1)
 
       _ -> undefined
 

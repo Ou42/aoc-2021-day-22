@@ -53,3 +53,7 @@ accumulateNonAdjacentTargets :: (Target, Remnant) -> AxisResult -> (Target, Remn
 accumulateNonAdjacentTargets (target, remnant) axisWithAdjacencies =
    undefined -- generate adjacent cuboids
 
+{- | Return a torn-off piece of the original cuboid -}
+createPiece :: Target -> Int -> TrgSeg -> Target
+createPiece (Target original) offset segment =
+   Target $ take offset original <> [segment] <> drop (offset+1) original

@@ -14,72 +14,84 @@ newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 
-{- | Roles played by Segments returned by ResultType
+{- | Roles played by Segments returned by AxisResult
 -}
 -- | The adjacent segment to the left of the source segment.
-newtype TargetAdjacentLeft  = TargetAdjacentLeft  TrgSeg deriving (Eq, Ord, Show)
+newtype AdjLeft  = AdjLeft  TrgSeg deriving (Eq, Ord, Show)
 -- | The adjacent segment to the right of the source segment.
-newtype TargetAdjacentRight = TargetAdjacentRight TrgSeg deriving (Eq, Ord, Show)
+newtype AdjRight = AdjRight TrgSeg deriving (Eq, Ord, Show)
+
+-- | The segment that defines the overlap over the source and target segments
+newtype Overlap = Overlap TrgSeg deriving (Eq, Ord, Show)
 
 {- | The catagories of results from combining two Segments together
    |
+   | We're calling it an AxisResult because a segment-pair comprises the dimension
+   | of one of the cuboid's sides.
 -}
-data ResultType
+data AxisResult
   {- | The two segments do not intersect at all
   -}
   = NoOverlap
 
-  {- | OverlapsTargetLeft
+  {- | OverlapsLeft
      |
      |                   ///////----- target ------
      |     ---- source ---------
   -}
-  | OverlapsTargetLeft TargetAdjacentRight
+  | OverlapsLeft Overlap AdjRight
 
-  {- | OverlapsTargetRight
+  {- | OverlapsRight
      |
      |     ----- target -----/////////
      |                       -------------- source ------
   -}
-  | OverlapsTargetRight TargetAdjacentLeft
+  | OverlapsRight AdjLeft Overlap
 
-  {- | OverlapsTarget
+  {- | Overlaps
      |
      |          /////// target ///////
      |     -------------- source -----------------
   -}
-  | OverlapsTarget -- Doesn't return anything
+  | Overlaps -- Doesn't return anything
 
   {- | OverlappedByTarget
      |
      |     -----//////// target //////-----------
      |          ------- source -------
   -}
-  | OverlappedByTarget TargetAdjacentLeft TargetAdjacentRight
+  | OverlappedByTarget AdjLeft Overlap AdjRight
 
   deriving (Eq, Ord, Show)
 
 {- Important axiom: a segment's slope must not be negative
 -}
-compareSegments :: SrcSeg -> TrgSeg -> ResultType
+compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
   | s2 < t1 =
       NoOverlap
   | s1 <= t1 && s2 >= t1 && s2 <= t2 =
-      OverlapsTargetLeft (TargetAdjacentRight $ TrgSeg (s2 + 1, t2))
+      OverlapsLeft
+         (Overlap $ TrgSeg (t1, s2))           --                   ///////----- AdjRight ------
+         (AdjRight $ TrgSeg (s2 + 1, t2))      --     ---- source ---------
   | s1 > t1 && s2 >= t2 =
-      OverlapsTargetRight (TargetAdjacentLeft $ TrgSeg (t1, s1 - 1))
+      OverlapsRight
+         (AdjLeft $ TrgSeg (t1, s1 - 1))   --         ----- AdjLeft ---///////
+         (Overlap $ TrgSeg (s1, t2))       --                          ---------- source -------
   | s1 <= t1 && s2 >= t1 =
-      OverlapsTarget
+      Overlaps
   | t1 < s1 && s2 < t2 =
-      OverlappedByTarget (TargetAdjacentLeft $ TrgSeg (t1, s1 - 1)) (TargetAdjacentRight $ TrgSeg (s2 + 1, t2))
+      OverlappedByTarget
+         (AdjLeft $ TrgSeg (t1, s1 - 1))
+         (Overlap $ TrgSeg (s1, s2))
+         (AdjRight $ TrgSeg (s2 + 1, t2))
   | otherwise = undefined
 
 {-| Convert SrcSeg to TrgSeg
 -}
 convert :: SrcSeg -> TrgSeg
-convert (SrcSeg (start, end)) =
-  TrgSeg (start, end)
+convert (SrcSeg seg) =
+  TrgSeg seg
 
 {- | Rendering -}
 

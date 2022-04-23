@@ -5,11 +5,12 @@ module Remnant where
 import CompareCuboids (mkAxisResults)
 import Cuboid (Source(..), Target(..))
 import Segment ( AxisResult(..)
+               , AdjLeft(..)
+               , AdjRight(..)
+               , Overlap(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
-               , AdjLeft(..)
-               , AdjRight(..)
                , compareSegments
                )
 
@@ -45,15 +46,23 @@ reduce remnant source target =
    else
       let
          axesWithAdjacencies = filter (/= Overlaps) axisResults
+         (_, remnant', _) = foldl accumulateNonAdjacentTargets (target, remnant, 0) axesWithAdjacencies
       in
-      snd $ foldl accumulateNonAdjacentTargets (target, remnant) axesWithAdjacencies
+      remnant'
 
 {- | generate the adjacent target cuboids from the compare -}
-accumulateNonAdjacentTargets :: (Target, Remnant) -> AxisResult -> (Target, Remnant)
-accumulateNonAdjacentTargets (target, remnant) axisWithAdjacencies =
-   undefined -- generate adjacent cuboids
+accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
+accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
+   case axisResult of
+      -- OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
+      --    (createPiece target axisOffset overlap
+      --       , createPiece target axisOffset adjRight : remnant
+      --       , axisOffset + 1)
+
+      _ -> undefined
+
 
 {- | Return a torn-off piece of the original cuboid -}
 createPiece :: Target -> Int -> TrgSeg -> Target
-createPiece (Target original) offset segment =
-   Target $ take offset original <> [segment] <> drop (offset+1) original
+createPiece (Target original) axisOffset segment =
+   Target $ take axisOffset original <> [segment] <> drop (axisOffset+1) original

@@ -90,8 +90,8 @@ compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
 {-| Convert SrcSeg to TrgSeg
 -}
 convert :: SrcSeg -> TrgSeg
-convert (SrcSeg (start, end)) =
-  TrgSeg (start, end)
+convert (SrcSeg seg) =
+  TrgSeg seg
 
 {- | Rendering -}
 

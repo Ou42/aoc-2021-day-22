@@ -18,9 +18,5 @@ import Segment ( AxisResult(..)
 type AxisResults = [AxisResult]
 
 mkAxisResults :: Source -> Target -> AxisResults
-mkAxisResults (Source sx sy sz) (Target tx ty tz) =
-   [ compareSegments sx tx
-   , compareSegments sy ty
-   , compareSegments sz tz
-   ]
+mkAxisResults (Source ss) (Target ts) = zipWith compareSegments ss ts
 

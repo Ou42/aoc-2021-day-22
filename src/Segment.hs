@@ -104,6 +104,6 @@ instance Show SrcSeg where
 toSrcSeg :: T.Text -> SrcSeg
 toSrcSeg pairStr = SrcSeg $ toTuple $ map readInt $ T.splitOn ".." pairStr
 
-length :: TrgSeg -> Int
-length (TrgSeg (start, end)) =
-   start * end
+dimension :: TrgSeg -> Int
+dimension (TrgSeg (start, end)) =
+   end + 1 - start

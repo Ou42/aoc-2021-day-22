@@ -5,11 +5,12 @@ module Remnant where
 import CompareCuboids (mkAxisResults)
 import Cuboid (Source(..), Target(..))
 import Segment ( AxisResult(..)
+               , AdjLeft(..)
+               , AdjRight(..)
+               , Overlap(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
-               , AdjLeft(..)
-               , AdjRight(..)
                , compareSegments
                )
 
@@ -18,6 +19,9 @@ import Segment ( AxisResult(..)
    | upon all the cuboids.
 -}
 type Remnant = [ Target ]
+
+emptyRemnant :: Remnant
+emptyRemnant = []
 
 reduceRemnantUsingSource :: Remnant -> Source -> Remnant
 reduceRemnantUsingSource previousRemnant source =
@@ -36,20 +40,39 @@ reduceRemnantUsingSource previousRemnant source =
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
-reduce remnant source target =
+reduce inputRemnant source target =
    let
       axisResults = mkAxisResults source target
    in
    if NoOverlap `elem` axisResults then
-      target : remnant
+      target : inputRemnant
    else
       let
-         axesWithAdjacencies = filter (/= Overlaps) axisResults
+         (_, outputRemnant, _) = foldl accumulateNonAdjacentTargets (target, inputRemnant, 0) axisResults
       in
-      snd $ foldl accumulateNonAdjacentTargets (target, remnant) axesWithAdjacencies
+      outputRemnant
 
 {- | generate the adjacent target cuboids from the compare -}
-accumulateNonAdjacentTargets :: (Target, Remnant) -> AxisResult -> (Target, Remnant)
-accumulateNonAdjacentTargets (target, remnant) axisWithAdjacencies =
-   undefined -- generate adjacent cuboids
+accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
+accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
+   case axisResult of
+      Overlaps ->
+         ( target, remnant, axisOffset + 1) -- Just bump axisOffset
+      OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
+         createCommon overlap ((createPiece target axisOffset adjRight) : remnant)
+      OverlapsRight (AdjLeft adjLeft) (Overlap overlap) ->
+         createCommon overlap ((createPiece target axisOffset adjLeft) : remnant)
+      OverlappedByTarget (AdjLeft adjLeft) (Overlap overlap) (AdjRight adjRight) ->
+         createCommon overlap ((createPiece target axisOffset adjRight) : ((createPiece target axisOffset adjLeft) : remnant))
+   where
+      createCommon :: TrgSeg -> Remnant -> (Target, Remnant, Int)
+      createCommon overlap' newRemnant =
+         ( createPiece target axisOffset overlap'
+         , newRemnant
+         , axisOffset + 1
+         )
 
+{- | Return a torn-off piece of the original cuboid -}
+createPiece :: Target -> Int -> TrgSeg -> Target
+createPiece (Target original) axisOffset segment =
+   Target $ take axisOffset original <> [segment] <> drop (axisOffset+1) original

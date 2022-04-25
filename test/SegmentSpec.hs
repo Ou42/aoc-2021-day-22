@@ -10,9 +10,15 @@ import Segment ( Overlap (..)
                , AdjLeft(..)
                , AdjRight(..)
                , compareSegments
+               , length
                )
 
 segmentSpec =
+  -- describe "length" $ do
+  --   it "positive to positive" $ do
+  --     length (TrgSeg (5, 8))
+  --       `shoutBe`
+  --         4
   describe "compareSegments" $ do
     it "detects no overlap" $ do
       compareSegments (SrcSeg (5,6))  (TrgSeg (7,8)) `shouldBe` NoOverlap

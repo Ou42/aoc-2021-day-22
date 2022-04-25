@@ -20,6 +20,9 @@ import Segment ( AxisResult(..)
 -}
 type Remnant = [ Target ]
 
+emptyRemnant :: Remnant
+emptyRemnant = []
+
 reduceRemnantUsingSource :: Remnant -> Source -> Remnant
 reduceRemnantUsingSource previousRemnant source =
    foldl prepareReduce [] previousRemnant

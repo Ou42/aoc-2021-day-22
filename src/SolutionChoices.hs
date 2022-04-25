@@ -16,21 +16,21 @@ data Implementation = Implementation
 jasonImplementation :: Implementation
 jasonImplementation =
   Implementation { name = "Jason"
-                 , inputFilePath = "data/Day-22-INPUT.txt"
+                 , inputFilePath = "data/Day-22-INPUT-test.txt"
                  , solver = RC.solvePuzzle
                  }
 
 scottImplementation :: Implementation
 scottImplementation =
     Implementation { name = "Scott"
-                   , inputFilePath = "data/Day-22-INPUT.txt"
+                   , inputFilePath = "data/Day-22-INPUT-test.txt"
                    , solver = scottSolver
                    }
 
 {- This specifies what solution to use!!!
 -}
 solutionToUse :: Implementation
-solutionToUse = scottImplementation
+solutionToUse = jasonImplementation
 
 filePath :: String
 filePath =
@@ -38,7 +38,7 @@ filePath =
 
 solveIt :: [Char] -> [Char]
 solveIt inputText =
-  solveSpecifically inputText jasonImplementation -- which solution is selected
+  solveSpecifically inputText solutionToUse
 
 solveSpecifically :: [Char] -> Implementation -> [Char]
 solveSpecifically inputText impl = do

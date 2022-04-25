@@ -38,6 +38,22 @@ jasonImplementation_i3 =
                  , correctAnswer = 547647
                  }
 
+jasonImplementation_i4 :: Implementation
+jasonImplementation_i4 =
+  Implementation { name = "Jason"
+                 , inputFilePath = "data/i4.txt"
+                 , solver = RC.solvePuzzle
+                 , correctAnswer = 321769 -- 231540 (2 rb)
+                 }
+
+scottImplementation_i4 :: Implementation
+scottImplementation_i4 =
+    Implementation { name = "Scott"
+                   , inputFilePath = "data/i4.txt"
+                   , solver = scottSolver
+                   , correctAnswer = 321769 -- 231540 (2 rb)
+                   }
+
 scottImplementation_i3 :: Implementation
 scottImplementation_i3 =
     Implementation { name = "Scott"
@@ -52,7 +68,9 @@ solutionToUse :: Implementation
 -- solutionToUse = jasonImplementation
 -- solutionToUse = scottImplementation
 -- solutionToUse = jasonImplementation_i3
-solutionToUse = scottImplementation_i3
+-- solutionToUse = scottImplementation_i3
+-- solutionToUse = jasonImplementation_i4
+solutionToUse = scottImplementation_i4
 
 filePath :: String
 filePath =

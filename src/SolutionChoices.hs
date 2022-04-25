@@ -30,7 +30,8 @@ scottImplementation =
 {- This specifies what solution to use!!!
 -}
 solutionToUse :: Implementation
-solutionToUse = jasonImplementation
+-- solutionToUse = jasonImplementation
+solutionToUse = scottImplementation
 
 filePath :: String
 filePath =

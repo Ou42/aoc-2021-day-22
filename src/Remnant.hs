@@ -55,12 +55,31 @@ accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target,
 accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
    case axisResult of
       OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
-         (createPiece target axisOffset overlap
-            , createPiece target axisOffset adjRight : remnant
-            , axisOffset + 1)
-
+         ( createPiece target axisOffset overlap
+         , (createPiece target axisOffset adjRight) : remnant
+         , axisOffset + 1
+         )
+      OverlapsRight (AdjLeft adjLeft) (Overlap overlap) ->
+         ( createPiece target axisOffset overlap
+         , (createPiece target axisOffset adjLeft) : remnant
+         , axisOffset + 1
+         )
+      OverlappedByTarget (AdjLeft adjLeft) (Overlap overlap) (AdjRight adjRight) ->
+         ( createPiece target axisOffset overlap
+         , ((createPiece target axisOffset adjRight) : ((createPiece target axisOffset adjLeft) : remnant))
+         , axisOffset + 1
+         )
       _ -> undefined
 
+{-
+      OverlapsRight
+         (AdjLeft $ TrgSeg (t1, s1 - 1))   --         ----- AdjLeft ---///////
+         (Overlap $ TrgSeg (s1, t2))       --                          ---------- source -------
+      OverlappedByTarget
+         (AdjLeft $ TrgSeg (t1, s1 - 1))
+         (Overlap $ TrgSeg (s1, s2))
+         (AdjRight $ TrgSeg (s2 + 1, t2))
+-}
 
 {- | Return a torn-off piece of the original cuboid -}
 createPiece :: Target -> Int -> TrgSeg -> Target

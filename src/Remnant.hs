@@ -40,23 +40,24 @@ reduceRemnantUsingSource previousRemnant source =
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
-reduce remnant source target =
+reduce inputRemnant source target =
    let
       axisResults = mkAxisResults source target
    in
    if NoOverlap `elem` axisResults then
-      target : remnant
+      target : inputRemnant
    else
       let
-         axesWithAdjacencies = filter (/= Overlaps) axisResults
-         (_, remnant', _) = foldl accumulateNonAdjacentTargets (target, remnant, 0) axesWithAdjacencies
+         (_, outputRemnant, _) = foldl accumulateNonAdjacentTargets (target, inputRemnant, 0) axisResults
       in
-      remnant'
+      outputRemnant
 
 {- | generate the adjacent target cuboids from the compare -}
 accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
 accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
    case axisResult of
+      Overlaps ->
+         ( target, remnant, axisOffset + 1) -- Just bump axisOffset
       OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
          createCommon overlap ((createPiece target axisOffset adjRight) : remnant)
       OverlapsRight (AdjLeft adjLeft) (Overlap overlap) ->

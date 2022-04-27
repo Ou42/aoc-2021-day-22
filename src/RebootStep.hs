@@ -54,13 +54,13 @@ generateRemnant = foldl accumulateRemnantFromRebootStep []
    | because its volume is irrelevant.
 -}
 accumulateRemnantFromRebootStep :: Remnant -> RebootStep -> Remnant
-accumulateRemnantFromRebootStep inputRemnant (RebootStep (rebootOperator, source)) =
+accumulateRemnantFromRebootStep incomingRemnant (RebootStep (rebootOperator, source)) =
    let
-      outputRemnant = reduceRemnantUsingSource inputRemnant source
+      outgoingRemnant = reduceRemnantUsingSource incomingRemnant source
    in
       if rebootOperator == Augment
-      then convertFromSourceToTarget source : outputRemnant
-      else outputRemnant
+      then convertFromSourceToTarget source : outgoingRemnant
+      else outgoingRemnant
 
 {- | Selects the function to implement the combining of the source and target cuboids
 -}

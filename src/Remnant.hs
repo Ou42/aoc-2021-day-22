@@ -44,17 +44,17 @@ reduceRemnantUsingSource previousRemnant source =
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
-reduce inputRemnant source target =
+reduce incomingRemnant source target =
    let
       axisResults = mkAxisResults source target
    in
    if NoOverlap `elem` axisResults then
-      target : inputRemnant
+      target : incomingRemnant
    else
       let
-         (_, outputRemnant, _) = foldl accumulateNonAdjacentTargets (target, inputRemnant, 0) axisResults
+         (_, outgoingRemnant, _) = foldl accumulateNonAdjacentTargets (target, incomingRemnant, 0) axisResults
       in
-      outputRemnant
+      outgoingRemnant
 
 {- | generate the adjacent target cuboids from the compare -}
 accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)

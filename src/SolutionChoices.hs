@@ -86,7 +86,7 @@ solveIt inputText =
 
 specWith :: String -> Spec
 specWith inputText = do
-  describe "Run Jason's Test Sequence" $ do jasonTestSequence inputText
+  describe "Scott's should match Jason's Test Sequence" $ do jasonTestSequence inputText
   -- describe "Cuboid" $ do cuboidSpec
   -- describe "SegmentTest" $ do segmentTestSpec
   -- describe "RebootStep" $ do rebootStepSpec
@@ -94,9 +94,9 @@ specWith inputText = do
 
 jasonTestSequence inputText = do
   it "should run Part B" $ do
-    RC.solvePuzzle inputText
+    scottSolver inputText
       `shouldBe`
-        1197308251666843
+        RC.solvePuzzle inputText
 
 scottSolver :: [Char] -> Int
 scottSolver inputText =

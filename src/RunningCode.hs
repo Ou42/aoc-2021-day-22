@@ -40,7 +40,7 @@ import Text.Printf (printf)
 import GHC.Exts (currentCallStack)
 
 solvePuzzle :: String -> Int
-solvePuzzle filePath = vol $ snd $ head $ processPwrSteps4 $ allSteps filePath
+solvePuzzle inputText = vol $ snd $ head $ processPwrSteps4 $ allSteps inputText
 
 inputTest :: [Char]
 inputTest = "data/Day-22-INPUT-test.txt"

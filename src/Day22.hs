@@ -1,9 +1,9 @@
 module Day22 where
 
-import SolutionChoices (inputFilePath, solutionToUse, solveIt)
+import SolutionChoices (inputFilePath, solveIt)
 
 solvePuzzle :: IO ()
 solvePuzzle = do
   inputText <- readFile inputFilePath
-  print $ solveIt inputText
+  solveIt inputText
 

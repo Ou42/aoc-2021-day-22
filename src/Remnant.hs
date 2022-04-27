@@ -63,20 +63,23 @@ accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
       Overlaps ->
          ( target, remnant, axisOffset + 1) -- Just bump axisOffset
       OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
-         createCommon overlap ((createPiece target axisOffset adjRight) : remnant)
+         createCommon overlap ((createPiece adjRight) : remnant)
       OverlapsRight (AdjLeft adjLeft) (Overlap overlap) ->
-         createCommon overlap ((createPiece target axisOffset adjLeft) : remnant)
+         createCommon overlap ((createPiece  adjLeft) : remnant)
       OverlappedByTarget (AdjLeft adjLeft) (Overlap overlap) (AdjRight adjRight) ->
-         createCommon overlap ((createPiece target axisOffset adjRight) : ((createPiece target axisOffset adjLeft) : remnant))
+         createCommon overlap ((createPiece adjRight) : ((createPiece adjLeft) : remnant))
    where
       createCommon :: TrgSeg -> Remnant -> (Target, Remnant, Int)
       createCommon overlap' newRemnant =
-         ( createPiece target axisOffset overlap'
+         ( createPiece overlap'
          , newRemnant
          , axisOffset + 1
          )
 
-{- | Return a torn-off piece of the original cuboid -}
-createPiece :: Target -> Int -> TrgSeg -> Target
-createPiece (Target original) axisOffset segment =
-   Target $ take axisOffset original <> [segment] <> drop (axisOffset+1) original
+      {- | Return a torn-off piece of the original cuboid -}
+      createPiece :: TrgSeg -> Target
+      createPiece segment =
+         let
+            Target incoming = target
+         in
+            Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming

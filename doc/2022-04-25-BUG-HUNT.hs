@@ -10,6 +10,13 @@ $ ghci
 *SolutionChoices> inputText
 "on x=-32..18,y=-49..-2,z=-43..3\non x=-15..35,y=-31..16,z=-9..43\non x=-22..23,y=2..47,z=-35..13\n"
 
+reformatted for us humans:
+"
+        on x=-32..18, y=-49..-2, z=-43.. 3
+        on x=-15..35, y=-31..16, z= -9..43
+        on x=-22..23, y=  2..47, z=-35..13
+"
+
 *SolutionChoices> generateRemnant $ parseInputText inputText
 [Target [TrgSeg (-22, 23),TrgSeg (  2, 47),TrgSeg (-35, 13)]
 ,Target [TrgSeg (-22,-16),TrgSeg (  2, -2),TrgSeg (-43,-36)]
@@ -48,3 +55,28 @@ TrgSeg (-35, 13)    49      49      49      49
 TrgSeg (-22,-16)     7       7       7       7 
 TrgSeg (  2, -2)    -3       3       0       5  <=== !!!!
 TrgSeg (-43,-36) ...
+
+{-
+    2022-04-26
+        . tried using "stack repl" this time, but had path issues
+        . went back to ghci, following instructions above
+        . the (2, -2) had to be the issue, but where was it coming from?
+
+    --... ...--  --... ...--  --... ...--  --... ...--  --... ...--  --... ...--
+
+        . eventually realized that reduce's "NoOverlap `elem` axisResults"
+          wasn't working. Tried to test, but then checked compareSegments ...
+                | s2 < t1 =
+                NoOverlap
+
+        . but ... it doesn't have to ONLY be source <space> target, right?!
+          changed it to:
+                | s2 < t1 || t2 < s1 =
+                NoOverlap
+
+    ....- ..---  ....- ..---  ....- ..---  ....- ..---  ....- ..---  ....- ..---
+
+        scottImplementation_i4  [PASSED]
+        scottImplementation_i3  [PASSED]
+        scottImplementation     [PASSED]
+-}

@@ -68,7 +68,7 @@ data AxisResult
 -}
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
-  | s2 < t1 =
+  | s2 < t1 || t2 < s1 =
       NoOverlap
   | s1 <= t1 && s2 >= t1 && s2 <= t2 =
       OverlapsLeft

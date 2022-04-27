@@ -66,11 +66,11 @@ scottImplementation_i3 =
 -}
 solutionToUse :: Implementation
 -- solutionToUse = jasonImplementation
--- solutionToUse = scottImplementation
+solutionToUse = scottImplementation
 -- solutionToUse = jasonImplementation_i3
 -- solutionToUse = scottImplementation_i3
 -- solutionToUse = jasonImplementation_i4
-solutionToUse = scottImplementation_i4
+-- solutionToUse = scottImplementation_i4
 
 filePath :: String
 filePath =

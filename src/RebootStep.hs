@@ -65,12 +65,3 @@ accumulateRemnantFromRebootStep incomingRemnant (RebootStep (rebootOperator, sou
 {- | Selects the function to implement the combining of the source and target cuboids
 -}
 data RebootOperator = Augment | Reduce deriving (Eq, Show)
-
-{- | Applies a `RebootStep` to a target `Cuboid`
-   |
-   | Properties
-   |
-   | 1. The `rebootStep` must always precede the `target`'s `RebootStep` in the `RebootSteps`' list.
--}
-applyReboot :: RebootStep -> Target -> Remnant
-applyReboot rebootStep target = [] -- TODO

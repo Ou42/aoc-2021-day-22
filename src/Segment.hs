@@ -68,7 +68,7 @@ data AxisResult
 -}
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
-  | s2 < t1 =
+  | s2 < t1 || t2 < s1 =
       NoOverlap
   | s1 <= t1 && s2 >= t1 && s2 <= t2 =
       OverlapsLeft
@@ -106,4 +106,5 @@ toSrcSeg pairStr = SrcSeg $ toTuple $ map readInt $ T.splitOn ".." pairStr
 
 dimension :: TrgSeg -> Int
 dimension (TrgSeg (start, end)) =
-   end + 1 - start
+   -- end + 1 - start
+   abs $ end + 1 - start

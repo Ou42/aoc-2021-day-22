@@ -1,9 +1,7 @@
 module Main where
 
 import Test.Hspec
-import qualified Data.Text as T
 
--- import CompareCuboidsSpec (compareCuboidsSpec)
 import CuboidSpec (cuboidSpec)
 import RebootStepSpec (rebootStepSpec)
 import RemnantSpec (remnantSpec)

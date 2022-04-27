@@ -17,8 +17,8 @@ convertFromSourceToTarget (Source source) =
 volume :: Target -> Int
 volume (Target sides) = product $ map dimension sides
 
-vol2 :: (TrgSeg -> Int) -> Target -> Int
-vol2 dimFunc (Target sides) = product $ map dimFunc sides
+-- vol2 :: (TrgSeg -> Int) -> Target -> Int
+-- vol2 dimFunc (Target sides) = product $ map dimFunc sides
 
 
 {- "x=-20..26,y=-36..17,z=-47..7" -}

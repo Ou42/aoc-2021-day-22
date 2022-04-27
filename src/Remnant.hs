@@ -2,7 +2,6 @@
 
 module Remnant where
 
-import CompareCuboids (mkAxisResults)
 import Cuboid (Source(..), Target(..))
 import Segment ( AxisResult(..)
                , AdjLeft(..)
@@ -19,6 +18,11 @@ import Segment ( AxisResult(..)
    | upon all the cuboids.
 -}
 type Remnant = [ Target ]
+
+type AxisResults = [AxisResult]
+
+mkAxisResults :: Source -> Target -> AxisResults
+mkAxisResults (Source ss) (Target ts) = zipWith compareSegments ss ts
 
 emptyRemnant :: Remnant
 emptyRemnant = []

@@ -18,6 +18,5 @@ spec = do
   describe "Segment" $ do segmentSpec
   describe "Cuboid" $ do cuboidSpec
   -- describe "SegmentTest" $ do segmentTestSpec
-  -- describe "CompareCuboids" $ do compareCuboidsSpec
   describe "RebootStep" $ do rebootStepSpec
   describe "Remnant" $ do remnantSpec

@@ -29,7 +29,7 @@ emptyRemnant = []
 
 reduceRemnantUsingSource :: Remnant -> Source -> Remnant
 reduceRemnantUsingSource previousRemnant source =
-   foldl prepareReduce [] previousRemnant
+   foldl prepareReduce emptyRemnant previousRemnant -- NOTE: each Source starts a new remnant
    where
       prepareReduce :: Remnant -> Target -> Remnant
       prepareReduce targetRemnant target =

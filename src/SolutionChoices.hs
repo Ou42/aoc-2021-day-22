@@ -84,21 +84,24 @@ solveIt :: String -> IO ()
 solveIt inputText =
   hspec (specWith inputText)
 
+scottSolver :: [Char] -> Int
+scottSolver inputText =
+  sum $ map volume $ generateRemnant $ parseInputText inputText
+
 specWith :: String -> Spec
 specWith inputText = do
-  describe "Scott's should match Jason's Test Sequence" $ do jasonTestSequence inputText
+  describe "Scott's should match Jason's Test Sequence" $ do
+    it "should run Part B" $ do
+      scottSolver inputText
+        `shouldBe`
+          RC.solvePuzzle inputText
+  describe "Scott's results" $ do
+    it "should run Part A" $ do
+      scottSolver inputText
+        `shouldBe`
+          42
   -- describe "Cuboid" $ do cuboidSpec
   -- describe "SegmentTest" $ do segmentTestSpec
   -- describe "RebootStep" $ do rebootStepSpec
   -- describe "Remnant" $ do remnantSpec
-
-jasonTestSequence inputText = do
-  it "should run Part B" $ do
-    scottSolver inputText
-      `shouldBe`
-        RC.solvePuzzle inputText
-
-scottSolver :: [Char] -> Int
-scottSolver inputText =
-  sum $ map volume $ generateRemnant $ parseInputText inputText
 

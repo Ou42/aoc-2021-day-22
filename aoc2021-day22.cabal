@@ -25,7 +25,6 @@ source-repository head
 
 library
   exposed-modules:
-      CompareCuboids
       Cuboid
       Day22
       Day22Old
@@ -52,7 +51,6 @@ library
 executable aoc2021-day22-exe
   main-is: Main.hs
   other-modules:
-      CompareCuboids
       Cuboid
       Day22
       Day22Old
@@ -87,7 +85,6 @@ test-suite aoc2021-day22-test
       SegmentSpec
       SegmentTest
       SegmentTestSpec
-      CompareCuboids
       Cuboid
       Day22
       Day22Old

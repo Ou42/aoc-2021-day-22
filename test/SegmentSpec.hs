@@ -20,6 +20,14 @@ segmentSpec =
         dimension (TrgSeg (5, 8))
           `shouldBe`
             4
+      it "positive to negative" $ do
+        dimension (TrgSeg (2, -2))
+          `shouldBe`
+            5
+      it "negative to negative" $ do
+        dimension (TrgSeg (-22, -16))
+          `shouldBe`
+            7
     describe "compareSegments" $ do
       it "detects no overlap" $ do
         compareSegments (SrcSeg (5,6))  (TrgSeg (7,8)) `shouldBe` NoOverlap

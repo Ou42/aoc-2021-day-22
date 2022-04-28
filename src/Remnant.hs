@@ -2,7 +2,6 @@
 
 module Remnant where
 
-import CompareCuboids (mkAxisResults)
 import Cuboid (Source(..), Target(..))
 import Segment ( AxisResult(..)
                , AdjLeft(..)
@@ -20,12 +19,17 @@ import Segment ( AxisResult(..)
 -}
 type Remnant = [ Target ]
 
+type AxisResults = [AxisResult]
+
+mkAxisResults :: Source -> Target -> AxisResults
+mkAxisResults (Source ss) (Target ts) = zipWith compareSegments ss ts
+
 emptyRemnant :: Remnant
 emptyRemnant = []
 
 reduceRemnantUsingSource :: Remnant -> Source -> Remnant
 reduceRemnantUsingSource previousRemnant source =
-   foldl prepareReduce [] previousRemnant
+   foldl prepareReduce emptyRemnant previousRemnant -- NOTE: each Source starts a new remnant
    where
       prepareReduce :: Remnant -> Target -> Remnant
       prepareReduce targetRemnant target =
@@ -40,17 +44,17 @@ reduceRemnantUsingSource previousRemnant source =
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
 reduce :: Remnant -> Source -> Target -> Remnant
-reduce inputRemnant source target =
+reduce incomingRemnant source target =
    let
       axisResults = mkAxisResults source target
    in
    if NoOverlap `elem` axisResults then
-      target : inputRemnant
+      target : incomingRemnant
    else
       let
-         (_, outputRemnant, _) = foldl accumulateNonAdjacentTargets (target, inputRemnant, 0) axisResults
+         (_, outgoingRemnant, _) = foldl accumulateNonAdjacentTargets (target, incomingRemnant, 0) axisResults
       in
-      outputRemnant
+      outgoingRemnant
 
 {- | generate the adjacent target cuboids from the compare -}
 accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)

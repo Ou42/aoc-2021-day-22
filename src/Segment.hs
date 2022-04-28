@@ -106,5 +106,4 @@ toSrcSeg pairStr = SrcSeg $ toTuple $ map readInt $ T.splitOn ".." pairStr
 
 dimension :: TrgSeg -> Int
 dimension (TrgSeg (start, end)) =
-   -- end + 1 - start
-   abs $ end + 1 - start
+   1 + abs (end - start)

@@ -2,93 +2,106 @@
 
 module SolutionChoices where
 
+import Test.Hspec
+
 import Cuboid (volume)
 import RebootStep (generateRemnant, parseInputText)
 import Remnant (Remnant)
 import qualified RunningCode as RC
 
-data Implementation = Implementation
-  { name :: String
-  , inputFilePath :: String
-  , solver :: String -> Int
-  , correctAnswer :: Int
-  }
+inputFilePath :: String
+inputFilePath = "data/Day-22-INPUT.txt"
 
-jasonImplementation :: Implementation
-jasonImplementation =
-  Implementation { name = "Jason"
-                 , inputFilePath = "data/Day-22-INPUT-test.txt"
-                 , solver = RC.solvePuzzle
-                 , correctAnswer = 39769202357779
-                 }
+-- data InputData = InputData
+--   { inputFilePath :: String
+--   , inputLines :: [String]
+--   }
 
-scottImplementation :: Implementation
-scottImplementation =
-    Implementation { name = "Scott"
-                   , inputFilePath = "data/Day-22-INPUT-test.txt"
-                   , solver = scottSolver
-                   , correctAnswer = 39769202357779
-                   }
+-- data ExpectedResult = ExpectedResult
+--   { author :: String
+--   , description :: String
+--   , solver :: String -> Int
+--   , correctAnswer :: Int
+--   , inputLineCount :: Int
+--   }
 
-jasonImplementation_i3 :: Implementation
-jasonImplementation_i3 =
-  Implementation { name = "Jason"
-                 , inputFilePath = "data/i3.txt"
-                 , solver = RC.solvePuzzle
-                 , correctAnswer = 547647
-                 }
+-- expectedResults :: [ExpectedResult]
+-- expectedResults =
+--   [ ExpectedResult { description = "Part A"
+--                    , solver
+--   ]
 
-jasonImplementation_i4 :: Implementation
-jasonImplementation_i4 =
-  Implementation { name = "Jason"
-                 , inputFilePath = "data/i4.txt"
-                 , solver = RC.solvePuzzle
-                 , correctAnswer = 321769 -- 231540 (2 rb)
-                 }
-
-scottImplementation_i4 :: Implementation
-scottImplementation_i4 =
-    Implementation { name = "Scott"
-                   , inputFilePath = "data/i4.txt"
-                   , solver = scottSolver
-                   , correctAnswer = 321769 -- 231540 (2 rb)
-                   }
-
-scottImplementation_i3 :: Implementation
-scottImplementation_i3 =
-    Implementation { name = "Scott"
-                   , inputFilePath = "data/i3.txt"
-                   , solver = scottSolver
-                   , correctAnswer = 547647
-                   }
-
-{- This specifies what solution to use!!!
--}
-solutionToUse :: Implementation
--- solutionToUse = jasonImplementation
-solutionToUse = scottImplementation
--- solutionToUse = jasonImplementation_i3
--- solutionToUse = scottImplementation_i3
--- solutionToUse = jasonImplementation_i4
--- solutionToUse = scottImplementation_i4
+-- implementations :: [Implementation]
+-- implementations =
+--   [ Implementation  { name = "Jason"
+--                     , inputFilePath = "data/Day-22-INPUT-test.txt"
+--                     , solver = RC.solvePuzzle
+--                     , correctAnswer = 39769202357779
+--                     , inputLines = []
+--                     }
+--   , Implementation  { name = "Scott"
+--                     , inputFilePath = "data/Day-22-INPUT-test.txt"
+--                     , solver = scottSolver
+--                     , correctAnswer = 39769202357779
+--                     , inputLines = []
+--                     }
+  -- , Implementation  { name = "Scott"
+  --                   , inputFilePath = "data/Day-22-INPUT-test.txt"
+  --                   , solver = scottSolver
+  --                   , correctAnswer = 39769202357779
+  --                   , inputLines = []
+  --                   }
+  -- , Implementation  { name = "Jason"
+  --                   , inputFilePath = "data/i3.txt"
+  --                   , solver = RC.solvePuzzle
+  --                   , correctAnswer = 547647
+  --                   , inputLines = []
+  --                   }
+  -- , Implementation  { name = "Jason"
+  --                   , inputFilePath = "data/i4.txt"
+  --                   , solver = RC.solvePuzzle
+  --                   , correctAnswer = 321769 -- 231540 (2 rb)
+  --                   }
+  -- , Implementation  { name = "Scott"
+  --                   , inputFilePath = "data/i4.txt"
+  --                   , solver = scottSolver
+  --                   , correctAnswer = 321769 -- 231540 (2 rb)
+  --                   , inputLines = []
+  --                   }
+  -- , Implementation  { name = "Scott"
+  --                   , inputFilePath = "data/i3.txt"
+  --                   , solver = scottSolver
+  --                   , correctAnswer = 547647
+  --                   , inputLines = []
+  --                   }
+  -- ]
 
 filePath :: String
 filePath =
-  inputFilePath solutionToUse
+  inputFilePath
 
-solveIt :: [Char] -> [Char]
+solveIt :: String -> IO ()
 solveIt inputText =
-  solveSpecifically inputText solutionToUse
-
-solveSpecifically :: [Char] -> Implementation -> [Char]
-solveSpecifically inputText impl = do
-  returnAnswer impl ((solver impl) inputText)
-
-returnAnswer :: Implementation -> Int -> [Char]
-returnAnswer i solverResult =
-  name i <> "'s ANSWER: " <> show solverResult <> "; Correct answer is " <> show (correctAnswer solutionToUse)
+  hspec (specWith inputText)
 
 scottSolver :: [Char] -> Int
 scottSolver inputText =
   sum $ map volume $ generateRemnant $ parseInputText inputText
+
+specWith :: String -> Spec
+specWith inputText = do
+  describe "Scott's should match Jason's Test Sequence" $ do
+    it "should run Part B" $ do
+      scottSolver inputText
+        `shouldBe`
+          RC.solvePuzzle inputText
+  describe "Scott's results" $ do
+    it "should run Part A" $ do
+      scottSolver inputText
+        `shouldBe`
+          42
+  -- describe "Cuboid" $ do cuboidSpec
+  -- describe "SegmentTest" $ do segmentTestSpec
+  -- describe "RebootStep" $ do rebootStepSpec
+  -- describe "Remnant" $ do remnantSpec
 

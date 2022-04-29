@@ -1,107 +1,41 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module SolutionChoices where
 
-import Test.Hspec
+import Test.Hspec (Spec, context, describe, it, hspec, shouldBe)
 
-import Cuboid (volume)
-import RebootStep (generateRemnant, parseInputText)
-import Remnant (Remnant)
-import qualified RunningCode as RC
+import CalculatePartA (calculatePartA)
+import RunningCode (solveAv2, solvePuzzle)
+import Solver (solver)
 
-inputFilePath :: String
-inputFilePath = "data/Day-22-INPUT.txt"
+inputPathJason :: String
+inputPathJason = "data/Day-22-INPUT.txt"
 
--- data InputData = InputData
---   { inputFilePath :: String
---   , inputLines :: [String]
---   }
+inputPathScott :: String
+inputPathScott = "data/Day-22-input-ofd.txt"
 
--- data ExpectedResult = ExpectedResult
---   { author :: String
---   , description :: String
---   , solver :: String -> Int
---   , correctAnswer :: Int
---   , inputLineCount :: Int
---   }
+solveIt :: (String, String) -> IO ()
+solveIt twoInputFiles =
+  hspec (specWith twoInputFiles)
 
--- expectedResults :: [ExpectedResult]
--- expectedResults =
---   [ ExpectedResult { description = "Part A"
---                    , solver
---   ]
-
--- implementations :: [Implementation]
--- implementations =
---   [ Implementation  { name = "Jason"
---                     , inputFilePath = "data/Day-22-INPUT-test.txt"
---                     , solver = RC.solvePuzzle
---                     , correctAnswer = 39769202357779
---                     , inputLines = []
---                     }
---   , Implementation  { name = "Scott"
---                     , inputFilePath = "data/Day-22-INPUT-test.txt"
---                     , solver = scottSolver
---                     , correctAnswer = 39769202357779
---                     , inputLines = []
---                     }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/Day-22-INPUT-test.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 39769202357779
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Jason"
-  --                   , inputFilePath = "data/i3.txt"
-  --                   , solver = RC.solvePuzzle
-  --                   , correctAnswer = 547647
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Jason"
-  --                   , inputFilePath = "data/i4.txt"
-  --                   , solver = RC.solvePuzzle
-  --                   , correctAnswer = 321769 -- 231540 (2 rb)
-  --                   }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/i4.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 321769 -- 231540 (2 rb)
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/i3.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 547647
-  --                   , inputLines = []
-  --                   }
-  -- ]
-
-filePath :: String
-filePath =
-  inputFilePath
-
-solveIt :: String -> IO ()
-solveIt inputText =
-  hspec (specWith inputText)
-
-scottSolver :: [Char] -> Int
-scottSolver inputText =
-  sum $ map volume $ generateRemnant $ parseInputText inputText
-
-specWith :: String -> Spec
-specWith inputText = do
-  describe "Scott's should match Jason's Test Sequence" $ do
-    it "should run Part B" $ do
-      scottSolver inputText
-        `shouldBe`
-          RC.solvePuzzle inputText
-  describe "Scott's results" $ do
-    it "should run Part A" $ do
-      scottSolver inputText
-        `shouldBe`
-          42
-  -- describe "Cuboid" $ do cuboidSpec
-  -- describe "SegmentTest" $ do segmentTestSpec
-  -- describe "RebootStep" $ do rebootStepSpec
-  -- describe "Remnant" $ do remnantSpec
+specWith :: (String, String) -> Spec
+specWith (inputTextJason, inputTextScott) = do
+  describe "Puzzle Answers" $ do
+    context "for Jason's exercise" $ do
+      it "Part A cube count" $ do
+        solveAv2 inputTextJason
+          `shouldBe`
+            577205
+      it "Part B cube count" $ do
+        solvePuzzle inputTextJason
+          `shouldBe`
+            1197308251666843
+    let (partA, partB) = solver inputTextScott
+    context "for Scott's exercise" $ do
+      it "Part A cube count" $ do
+        partA
+          `shouldBe`
+            598616
+      it "Part B cube count" $ do
+        partB
+          `shouldBe`
+            1193043154475246
 

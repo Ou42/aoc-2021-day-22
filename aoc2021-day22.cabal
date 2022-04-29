@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      CalculatePartA
       Cuboid
       Day22
       Day22Old
@@ -34,6 +35,7 @@ library
       RunningCode
       Segment
       SolutionChoices
+      Solver
       Utils
   other-modules:
       Paths_aoc2021_day22
@@ -51,6 +53,7 @@ library
 executable aoc2021-day22-exe
   main-is: Main.hs
   other-modules:
+      CalculatePartA
       Cuboid
       Day22
       Day22Old
@@ -60,6 +63,7 @@ executable aoc2021-day22-exe
       RunningCode
       Segment
       SolutionChoices
+      Solver
       Utils
   hs-source-dirs:
       app
@@ -85,6 +89,7 @@ test-suite aoc2021-day22-test
       SegmentSpec
       SegmentTest
       SegmentTestSpec
+      CalculatePartA
       Cuboid
       Day22
       Day22Old
@@ -94,6 +99,7 @@ test-suite aoc2021-day22-test
       RunningCode
       Segment
       SolutionChoices
+      Solver
       Utils
       Paths_aoc2021_day22
   hs-source-dirs:

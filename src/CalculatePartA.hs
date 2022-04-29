@@ -6,18 +6,6 @@ import Remnant (Remnant, emptyRemnant, mkAxisResults)
 import qualified RunningCode as RC
 import Segment (AdjLeft(..), AdjRight(..), AxisResult(..), Overlap(..), SrcSeg(..), TrgSeg(..))
 
-scottSolver :: [Char] -> (Int, Int)
-scottSolver inputText =
-  let
-    remnant = generateRemnant $ parseInputText inputText
-    partA = reduceToTotalVolume $ calculatePartA remnant
-    partB = reduceToTotalVolume remnant
-  in
-    (partA, partB)
-
-reduceToTotalVolume :: Remnant -> Int
-reduceToTotalVolume = sum . map volume
-
 calculatePartA :: Remnant -> Remnant
 calculatePartA = foldl truncateTarget emptyRemnant
 

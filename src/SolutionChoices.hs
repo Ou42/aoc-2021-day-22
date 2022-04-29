@@ -1,10 +1,10 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module SolutionChoices where
 
 import Test.Hspec
 
-import CalculatePartA (calculatePartA, scottSolver)
+import CalculatePartA (calculatePartA)
+import RunningCode (solveAv2, solvePuzzle)
+import Solver (solver)
 
 inputPathJason :: String
 inputPathJason = "data/Day-22-INPUT.txt"
@@ -19,17 +19,16 @@ solveIt twoInputFiles =
 specWith :: (String, String) -> Spec
 specWith (inputTextJason, inputTextScott) = do
   describe "Puzzle Answers" $ do
-    let (partA, partB) = scottSolver inputTextJason
     context "for Jason's exercise" $ do
       it "Part A cube count" $ do
-        partA
+        solveAv2 inputTextJason
           `shouldBe`
             577205
       it "Part B cube count" $ do
-        partB
+        solvePuzzle inputTextJason
           `shouldBe`
             1197308251666843
-    let (partA, partB) = scottSolver inputTextScott
+    let (partA, partB) = solver inputTextScott
     context "for Scott's exercise" $ do
       it "Part A cube count" $ do
         partA

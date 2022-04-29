@@ -1,6 +1,6 @@
 module SolutionChoices where
 
-import Test.Hspec
+import Test.Hspec (Spec, context, describe, it, hspec, shouldBe)
 
 import CalculatePartA (calculatePartA)
 import RunningCode (solveAv2, solvePuzzle)

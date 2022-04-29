@@ -10,80 +10,15 @@ import Remnant (Remnant, emptyRemnant, mkAxisResults)
 import qualified RunningCode as RC
 import Segment (AdjLeft(..), AdjRight(..), AxisResult(..), Overlap(..), SrcSeg(..), TrgSeg(..))
 
-inputFilePath :: String
-inputFilePath = "data/Day-22-INPUT.txt"
+inputPathJason :: String
+inputPathJason = "data/Day-22-INPUT.txt"
 
--- data InputData = InputData
---   { inputFilePath :: String
---   , inputLines :: [String]
---   }
+inputPathScott :: String
+inputPathScott = "data/Day-22-input-ofd.txt"
 
--- data ExpectedResult = ExpectedResult
---   { author :: String
---   , description :: String
---   , solver :: String -> Int
---   , correctAnswer :: Int
---   , inputLineCount :: Int
---   }
-
--- expectedResults :: [ExpectedResult]
--- expectedResults =
---   [ ExpectedResult { description = "Part A"
---                    , solver
---   ]
-
--- implementations :: [Implementation]
--- implementations =
---   [ Implementation  { name = "Jason"
---                     , inputFilePath = "data/Day-22-INPUT-test.txt"
---                     , solver = RC.solvePuzzle
---                     , correctAnswer = 39769202357779
---                     , inputLines = []
---                     }
---   , Implementation  { name = "Scott"
---                     , inputFilePath = "data/Day-22-INPUT-test.txt"
---                     , solver = scottSolver
---                     , correctAnswer = 39769202357779
---                     , inputLines = []
---                     }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/Day-22-INPUT-test.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 39769202357779
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Jason"
-  --                   , inputFilePath = "data/i3.txt"
-  --                   , solver = RC.solvePuzzle
-  --                   , correctAnswer = 547647
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Jason"
-  --                   , inputFilePath = "data/i4.txt"
-  --                   , solver = RC.solvePuzzle
-  --                   , correctAnswer = 321769 -- 231540 (2 rb)
-  --                   }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/i4.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 321769 -- 231540 (2 rb)
-  --                   , inputLines = []
-  --                   }
-  -- , Implementation  { name = "Scott"
-  --                   , inputFilePath = "data/i3.txt"
-  --                   , solver = scottSolver
-  --                   , correctAnswer = 547647
-  --                   , inputLines = []
-  --                   }
-  -- ]
-
-filePath :: String
-filePath =
-  inputFilePath
-
-solveIt :: String -> IO ()
-solveIt inputText =
-  hspec (specWith inputText)
+solveIt :: (String, String) -> IO ()
+solveIt twoInputFiles =
+  hspec (specWith twoInputFiles)
 
 scottSolver :: [Char] -> (Int, Int)
 scottSolver inputText =
@@ -145,15 +80,28 @@ region50 = SrcSeg (-50, 50)
 
 region50Source = Source [region50, region50, region50]
 
-specWith :: String -> Spec
-specWith inputText = do
-  describe "Scott's should match Jason's Test Sequence" $ do
-    it "should run Part B" $ do
-      scottSolver inputText
-        `shouldBe`
-          (RC.solveAv2 inputText, RC.solvePuzzle inputText)
-  -- describe "Cuboid" $ do cuboidSpec
-  -- describe "SegmentTest" $ do segmentTestSpec
-  -- describe "RebootStep" $ do rebootStepSpec
-  -- describe "Remnant" $ do remnantSpec
+specWith :: (String, String) -> Spec
+specWith (inputTextJason, inputTextScott) = do
+  describe "Puzzle Answer for Jason's file" $ do
+    let (partA, partB) = scottSolver inputTextJason
+    context "Exercise" $ do
+      it "Part A cube count" $ do
+        partA
+          `shouldBe`
+            577205
+      it "Part B cube count" $ do
+        partB
+          `shouldBe`
+            1197308251666843
+  describe "Puzzle Answer for Scott's file" $ do
+    let (partA, partB) = scottSolver inputTextScott
+    context "Exercise" $ do
+      it "Part A cube count" $ do
+        partA
+          `shouldBe`
+            598616
+      it "Part B cube count" $ do
+        partB
+          `shouldBe`
+            1193043154475246
 

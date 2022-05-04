@@ -47,8 +47,9 @@ reduce :: Remnant -> Source -> Target -> Remnant
 reduce incomingRemnant source target =
    let
       axisResults = mkAxisResults source target
+      noOverlap   = (Nothing, [])
    in
-   if NoOverlap `elem` axisResults then
+   if noOverlap `elem` axisResults then
       target : incomingRemnant
    else
       let
@@ -58,16 +59,8 @@ reduce incomingRemnant source target =
 
 {- | Accumulate remnant candidates while shrinking target for next axis resize calculation -}
 accumulateRemnantCandidates :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
-accumulateRemnantCandidates (target, remnant, axisOffset) axisResult =
-   case axisResult of
-      Overlaps ->
-         ( target, remnant, axisOffset + 1) -- Just bump axisOffset
-      OverlapsLeft (Overlap overlap) (AdjRight adjRight) ->
-         createCommon overlap ((createPiece adjRight) : remnant)
-      OverlapsRight (AdjLeft adjLeft) (Overlap overlap) ->
-         createCommon overlap ((createPiece  adjLeft) : remnant)
-      OverlappedByTarget (AdjLeft adjLeft) (Overlap overlap) (AdjRight adjRight) ->
-         createCommon overlap ((createPiece adjRight) : ((createPiece adjLeft) : remnant))
+accumulateRemnantCandidates (target, remnant, axisOffset) axisResult@(Just overlap, remainder) =
+   createCommon overlap $ foldl prependPiece remnant remainder
    where
       createCommon :: TrgSeg -> Remnant -> (Target, Remnant, Int)
       createCommon overlap' newRemnant =
@@ -77,9 +70,13 @@ accumulateRemnantCandidates (target, remnant, axisOffset) axisResult =
          )
 
       {- | Return a torn-off piece of the original cuboid -}
+      prependPiece :: Remnant -> TrgSeg -> Remnant
+      prependPiece remnant' segment =
+         (createPiece segment) : remnant'
+
       createPiece :: TrgSeg -> Target
       createPiece segment =
          let
             Target incoming = target
          in
-            Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming
+            (Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming)

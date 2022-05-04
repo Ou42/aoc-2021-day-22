@@ -13,8 +13,9 @@ truncateTarget :: Remnant -> Target -> Remnant
 truncateTarget outgoingRemnant target =
   let
     axisResults = mkAxisResults region50Source target
+    noOverlap   = (Nothing, [])
   in
-    if NoOverlap `elem` axisResults then
+    if noOverlap `elem` axisResults then
       outgoingRemnant
     else
       let
@@ -24,16 +25,8 @@ truncateTarget outgoingRemnant target =
 
 {- | generate the overlap cuboid from the compare -}
 sourceTargetIntersection :: (Target, Int) -> AxisResult -> (Target, Int)
-sourceTargetIntersection (target, axisOffset) axisResult =
-   case axisResult of
-      Overlaps ->
-         (target, axisOffset + 1)
-      OverlapsLeft (Overlap overlap) (AdjRight _) ->
-         createCommon overlap
-      OverlapsRight (AdjLeft _) (Overlap overlap) ->
-         createCommon overlap
-      OverlappedByTarget (AdjLeft _) (Overlap overlap) (AdjRight _) ->
-         createCommon overlap
+sourceTargetIntersection (target, axisOffset) axisResult@(Just overlap, _) =
+   createCommon overlap
    where
       createCommon :: TrgSeg -> (Target, Int)
       createCommon overlap' =

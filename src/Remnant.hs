@@ -52,13 +52,13 @@ reduce incomingRemnant source target =
       target : incomingRemnant
    else
       let
-         (_, outgoingRemnant, _) = foldl accumulateNonAdjacentTargets (target, incomingRemnant, 0) axisResults
+         (_, outgoingRemnant, _) = foldl accumulateRemnantCandidates (target, incomingRemnant, 0) axisResults
       in
       outgoingRemnant
 
-{- | generate the adjacent target cuboids from the compare -}
-accumulateNonAdjacentTargets :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
-accumulateNonAdjacentTargets (target, remnant, axisOffset) axisResult =
+{- | Accumulate remnant candidates while shrinking target for next axis resize calculation -}
+accumulateRemnantCandidates :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
+accumulateRemnantCandidates (target, remnant, axisOffset) axisResult =
    case axisResult of
       Overlaps ->
          ( target, remnant, axisOffset + 1) -- Just bump axisOffset

@@ -87,8 +87,6 @@ test-suite aoc2021-day22-test
       RebootStepSpec
       RemnantSpec
       SegmentSpec
-      SegmentTest
-      SegmentTestSpec
       CalculatePartA
       Cuboid
       Day22

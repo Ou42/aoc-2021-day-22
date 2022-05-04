@@ -29,62 +29,33 @@ newtype Overlap = Overlap TrgSeg deriving (Eq, Ord, Show)
    | We're calling it an AxisResult because a segment-pair comprises the dimension
    | of one of the cuboid's sides.
 -}
-data AxisResult
-  {- | The two segments do not intersect at all
-  -}
-  = NoOverlap
-
-  {- | OverlapsLeft
-     |
-     |                   ///////----- target ------
-     |     ---- source ---------
-  -}
-  | OverlapsLeft Overlap AdjRight
-
-  {- | OverlapsRight
-     |
-     |     ----- target -----/////////
-     |                       -------------- source ------
-  -}
-  | OverlapsRight AdjLeft Overlap
-
-  {- | Overlaps
-     |
-     |          /////// target ///////
-     |     -------------- source -----------------
-  -}
-  | Overlaps -- Doesn't return anything
-
-  {- | OverlappedByTarget
-     |
-     |     -----//////// target //////-----------
-     |          ------- source -------
-  -}
-  | OverlappedByTarget AdjLeft Overlap AdjRight
-
-  deriving (Eq, Ord, Show)
+-- newtype AxisResult = AxisResult (Maybe TrgSeg, [TrgSeg]) deriving (Eq, Ord, Show)
+type AxisResult = (Maybe TrgSeg, [TrgSeg])
 
 {- Important axiom: a segment's slope must not be negative
 -}
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
-compareSegments (SrcSeg(s1, s2)) (TrgSeg (t1, t2))
-  | s2 < t1 || t2 < s1 =
-      NoOverlap
-  | s1 <= t1 && s2 >= t1 && s2 <= t2 =
-      OverlapsLeft
-         (Overlap $ TrgSeg (t1, s2))           --                   ///////----- AdjRight ------
-         (AdjRight $ TrgSeg (s2 + 1, t2))      --     ---- source ---------
-  | s1 > t1 && s2 >= t2 =
-      OverlapsRight
-         (AdjLeft $ TrgSeg (t1, s1 - 1))   --         ----- AdjLeft ---///////
-         (Overlap $ TrgSeg (s1, t2))       --                          ---------- source -------
-  | s1 <= t1 && s2 >= t1 =
-      Overlaps
-  | t1 < s1 && s2 < t2 =
-      OverlappedByTarget
-         (AdjLeft $ TrgSeg (t1, s1 - 1))
-         (Overlap $ TrgSeg (s1, s2))
-         (AdjRight $ TrgSeg (s2 + 1, t2))
+compareSegments (SrcSeg (s1, s2)) (TrgSeg (t1, t2))
+  | s2 < t1 || t2 < s1 =                 -- no overlap
+      (Nothing, [])
+  | s1 <= t1 && s2 >= t1 && s2 <= t2 =   -- overlaps on the left
+      ( Just $ TrgSeg (t1, s2)           --                   ///////----- AdjRight ------
+      , [ TrgSeg (s2 + 1, t2) ]          --     ---- source ---------
+      )
+  | s1 > t1 && s2 >= t2 =                -- overlaps right
+      ( Just $ TrgSeg (s1, t2)           --         ----- AdjLeft ---///////
+      , [ TrgSeg (t1, s1 - 1) ]          --                          ---------- source -------
+      )
+  | s1 <= t1 && s2 >= t1 =               -- source overlaps target
+      ( Just $ TrgSeg (t1, t2)           --                /////// target ///////
+      , []                               --           -------------- source -----------------
+      )
+  | t1 < s1 && s2 < t2 =                 -- overlapped by target
+      ( Just $ TrgSeg (s1, s2)           --        -----//////// target //////-----------
+      , [ TrgSeg (t1, s1 - 1)            --             ------- source -------
+        , TrgSeg (s2 + 1, t2)
+        ]
+      )
   | otherwise = undefined
 
 {-| Convert SrcSeg to TrgSeg

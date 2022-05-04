@@ -3,7 +3,7 @@ module RemnantSpec where
 import Test.Hspec
 
 import Cuboid (Source(..), Target(..))
-import Remnant (Remnant, accumulateNonAdjacentTargets, reduce)
+import Remnant (Remnant, reduce)
 import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)

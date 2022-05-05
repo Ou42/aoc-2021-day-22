@@ -14,23 +14,17 @@ newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord) -- fst <= snd
 newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 
-{- | Roles played by Segments returned by AxisResult
--}
--- | The adjacent segment to the left of the source segment.
-newtype AdjLeft  = AdjLeft  TrgSeg deriving (Eq, Ord, Show)
--- | The adjacent segment to the right of the source segment.
-newtype AdjRight = AdjRight TrgSeg deriving (Eq, Ord, Show)
-
--- | The segment that defines the overlap over the source and target segments
-newtype Overlap = Overlap TrgSeg deriving (Eq, Ord, Show)
-
 {- | The catagories of results from combining two Segments together
    |
-   | We're calling it an AxisResult because a segment-pair comprises the dimension
+   | We're calling it an AxisResult because a segment-pair comprises the
+   | decomposition of the dimension
    | of one of the cuboid's sides.
 -}
 -- newtype AxisResult = AxisResult (Maybe TrgSeg, [TrgSeg]) deriving (Eq, Ord, Show)
-type AxisResult = (Maybe TrgSeg, [TrgSeg])
+data AxisResult
+  = NoOverlap
+  | Intersects (Maybe TrgSeg) [TrgSeg]
+  | TargetSwallowedBySource
 
 {- Important axiom: a segment's slope must not be negative
 -}
@@ -50,26 +44,25 @@ type AxisResult = (Maybe TrgSeg, [TrgSeg])
 -- 'TargetSwallowedBySource' .  The calling functions will thank us.
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg (s1, s2)) (TrgSeg (t1, t2))
-  | s2 < t1 || t2 < s1 =                 -- no overlap
-      (Nothing, [])
-  | s1 <= t1 && s2 >= t1 && s2 <= t2 =   -- overlaps on the left
-      ( Just $ TrgSeg (t1, s2)           --                   ///////----- AdjRight ------
-      , [ TrgSeg (s2 + 1, t2) ]          --     ---- source ---------
-      )
-  | s1 > t1 && s2 >= t2 =                -- overlaps right
-      ( Just $ TrgSeg (s1, t2)           --         ----- AdjLeft ---///////
-      , [ TrgSeg (t1, s1 - 1) ]          --                          ---------- source -------
-      )
-  | s1 <= t1 && s2 >= t1 =               -- source overlaps target
-      ( Just $ TrgSeg (t1, t2)           --                /////// target ///////
-      , []                               --           -------------- source -----------------
-      )
-  | t1 < s1 && s2 < t2 =                 -- overlapped by target
-      ( Just $ TrgSeg (s1, s2)           --        -----//////// target //////-----------
-      , [ TrgSeg (t1, s1 - 1)            --             ------- source -------
-        , TrgSeg (s2 + 1, t2)
-        ]
-      )
+  | s2 < t1 || t2 < s1 =                     -- no overlap
+      NoOverlap
+  | s1 <= t1 && s2 >= t1 && s2 <= t2 =       -- overlaps on the left
+      Intersects
+        ( Just $ TrgSeg (t1, s2))            --                   ///////----- AdjRight ------
+            [ TrgSeg (s2 + 1, t2) ]          --     ---- source ---------
+  | s1 > t1 && s2 >= t2 =                    -- overlaps right
+      Intersects
+        ( Just $ TrgSeg (s1, t2))            --         ----- AdjLeft ---///////
+            [ TrgSeg (t1, s1 - 1) ]          --                          ---------- source -------
+  | s1 <= t1 && s2 >= t1 =                   -- source overlaps target
+      TargetSwallowedBySource                --                /////// target ///////
+                                             --       -------------- source  -----------------
+  | t1 < s1 && s2 < t2 =                     -- overlapped by target
+      Intersects
+        ( Just $ TrgSeg (s1, s2))            --        -----//////// target //////-----------
+            [ TrgSeg (t1, s1 - 1)            --             ------- source -------
+            , TrgSeg (s2 + 1, t2)
+            ]
   | otherwise = undefined
 
 {-| Convert SrcSeg to TrgSeg

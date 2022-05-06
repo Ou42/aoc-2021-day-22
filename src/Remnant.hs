@@ -4,9 +4,6 @@ module Remnant where
 
 import Cuboid (Source(..), Target(..))
 import Segment ( AxisResult(..)
-               , AdjLeft(..)
-               , AdjRight(..)
-               , Overlap(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
@@ -38,34 +35,22 @@ reduceRemnantUsingSource previousRemnant source =
    where
       prepareReduce :: Remnant -> Target -> Remnant
       prepareReduce targetRemnant target =
-         reduce targetRemnant source target
+         moveWhatsNotSourceIntoTheRemnant targetRemnant source target
 
-{- | If there are any adjacent targets resulting from reducing
-   | the current target from the source, then add them to the
+{- | If there are any adjacent targets resulting from decomposing
+   | the source against the current target, then add them to the
    | remnant
    |
    | Properties:
    |
    | 1. The combined volumes of the remnant == 2nd Cuboid's volume - the volume of the 2 cuboids' intersection
 -}
--- ISSUE: Plea for better name; 'reduce' is too "wishy-washy".
---        Let's change it to "decompose"; we are decomposing to separate
---        the intersection cuboids into those that will be used as what
---        we've been calling 'overlay's vs those that are going to go into
---        the remnant.
-reduce :: Remnant -> Source -> Target -> Remnant
-reduce incomingRemnant source target =
+moveWhatsNotSourceIntoTheRemnant :: Remnant -> Source -> Target -> Remnant
+moveWhatsNotSourceIntoTheRemnant incomingRemnant source target =
    let
       axisResults = mkAxisResults source target
-
-      -- ISSUE: This functionality duplicated in CalculatePartA
-      noOverlap   = (Nothing, [])
    in
-   -- ISSUE: From here up the end of the function is a hack
-   -- that was hard to write and will be hard to understand.
-   -- Suggested change in Segment that will make the needed
-   -- changes obvious.
-   if noOverlap `elem` axisResults then
+   if NoOverlap `elem` axisResults then
       target : incomingRemnant
    else
       let
@@ -75,28 +60,22 @@ reduce incomingRemnant source target =
 
 {- | Accumulate remnant candidates while shrinking target for next axis resize calculation -}
 accumulateRemnantCandidates :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
-accumulateRemnantCandidates (target, remnant, axisOffset) axisResult@(Just overlap, remainder) =
-   createCommon overlap $ foldl prependPiece remnant remainder
-   where
-      createCommon :: TrgSeg -> Remnant -> (Target, Remnant, Int)
-      createCommon overlap' newRemnant =
-         -- ISSUE: createPiece here redundently recreates the
-         -- cuboid already defined by 'target' above when it
-         -- doesn't need to.
-         ( createPiece overlap'
-         , newRemnant
+accumulateRemnantCandidates acc@(target, remnant, axisOffset) axisResult =
+   case axisResult of
+      TargetSwallowedBySource -> (target, remnant, axisOffset + 1)
+      Intersects (Just overlapSeg) decomposedSegments ->
+         ( createPiece overlapSeg
+         , foldl
+            (\incomingRemnant decomposedSegment -> createPiece decomposedSegment : incomingRemnant)
+               remnant
+                  decomposedSegments
          , axisOffset + 1
          )
-
-      {- | Return a torn-off piece of the original cuboid -}
-      prependPiece :: Remnant -> TrgSeg -> Remnant
-      prependPiece remnant' segment =
-         (createPiece segment) : remnant'
-
-      -- ISSUE: Duplicated in CalculatePartA
-      createPiece :: TrgSeg -> Target
-      createPiece segment =
-         let
-            Target incoming = target
-         in
-            (Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming)
+         where
+            -- ISSUE: Duplicated in CalculatePartA
+            createPiece :: TrgSeg -> Target
+            createPiece segment =
+               let
+                  Target incoming = target
+               in
+               Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming

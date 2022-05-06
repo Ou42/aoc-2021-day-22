@@ -25,6 +25,7 @@ data AxisResult
   = NoOverlap
   | Intersects (Maybe TrgSeg) [TrgSeg]
   | TargetSwallowedBySource
+      deriving (Eq, Ord, Show)
 
 {- Important axiom: a segment's slope must not be negative
 -}

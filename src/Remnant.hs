@@ -2,7 +2,7 @@
 
 module Remnant where
 
-import Cuboid (Source(..), Target(..))
+import Cuboid (Source(..), Target(..), createPiece)
 import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
@@ -60,22 +60,14 @@ moveWhatsNotSourceIntoTheRemnant incomingRemnant source target =
 
 {- | Accumulate remnant candidates while shrinking target for next axis resize calculation -}
 accumulateRemnantCandidates :: (Target, Remnant, Int) -> AxisResult -> (Target, Remnant, Int)
-accumulateRemnantCandidates acc@(target, remnant, axisOffset) axisResult =
+accumulateRemnantCandidates (target, remnant, axisOffset) axisResult =
    case axisResult of
       TargetSwallowedBySource -> (target, remnant, axisOffset + 1)
       Intersects (Just overlapSeg) decomposedSegments ->
-         ( createPiece overlapSeg
+         (createPiece overlapSeg axisOffset target
          , foldl
-            (\incomingRemnant decomposedSegment -> createPiece decomposedSegment : incomingRemnant)
+            (\incomingRemnant decomposedSegment -> createPiece decomposedSegment axisOffset target : incomingRemnant)
                remnant
                   decomposedSegments
          , axisOffset + 1
          )
-         where
-            -- ISSUE: Duplicated in CalculatePartA
-            createPiece :: TrgSeg -> Target
-            createPiece segment =
-               let
-                  Target incoming = target
-               in
-               Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming

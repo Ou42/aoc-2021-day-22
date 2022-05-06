@@ -31,3 +31,8 @@ volume (Target sides) = product $ map dimension sides
 parseSource :: T.Text -> Source
 parseSource str =
     Source $ map (toSrcSeg . last . T.splitOn "=") $ T.splitOn "," str
+
+createPiece :: TrgSeg -> Int -> Target -> Target
+createPiece segment axisOffset (Target incoming) =
+   Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming
+

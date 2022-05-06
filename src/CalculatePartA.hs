@@ -1,6 +1,6 @@
 module CalculatePartA where
 
-import Cuboid (volume, Source(..), Target(..))
+import Cuboid (createPiece, volume, Source(..), Target(..))
 import RebootStep (generateRemnant, parseInputText)
 import Remnant (Remnant, emptyRemnant, mkAxisResults)
 import qualified RunningCode as RC
@@ -29,18 +29,9 @@ sourceTargetIntersection (target, axisOffset) axisResult =
       TargetSwallowedBySource ->
          (target, axisOffset + 1)
       Intersects (Just overlap) _ ->
-         (createPiece overlap, axisOffset + 1)
-   where
-
-      {- | Return a torn-off piece of the original cuboid -}
-      -- ISSUE: Duplicated in Remnant.  Also, why can't we call this
-      -- something more accurate like 'createFragmentTarget'
-      createPiece :: TrgSeg -> Target
-      createPiece segment =
-        let
-          Target incoming = target
-        in
-        Target $ take axisOffset incoming <> [segment] <> drop (axisOffset+1) incoming
+         ( createPiece overlap axisOffset target
+         , axisOffset + 1
+         )
 
 region50 :: SrcSeg
 region50 = SrcSeg (-50, 50)

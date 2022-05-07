@@ -47,6 +47,11 @@ remnantSpec =
           []
     context "Test compare where source and target intersect to generate adjacents" $ do
       it "the number of adjacent targets" $ do
-        length (moveWhatsNotSourceIntoTheRemnant emptyRemnant (Source [srcSeg40, srcSeg18, srcSeg50]) (Target [trgSeg10, trgSegIntersects, trgSeg30]))
+        length
+          (moveWhatsNotSourceIntoTheRemnant
+            emptyRemnant
+            (Source [srcSeg40, srcSeg18, srcSeg50])
+            (Target [trgSeg10, trgSegIntersects, trgSeg30])
+          )
           `shouldBe`
             1

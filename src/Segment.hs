@@ -10,8 +10,7 @@ newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 
 {- How arguments to compareSegments are passed
 -}
-
-newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord) -- fst <= snd
+newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord)       -- fst <= snd
 newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
 
 {- | The catagories of results from combining two Segments together
@@ -20,29 +19,14 @@ newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
    | decomposition of the dimension
    | of one of the cuboid's sides.
 -}
--- newtype AxisResult = AxisResult (Maybe TrgSeg, [TrgSeg]) deriving (Eq, Ord, Show)
 data AxisResult
   = NoOverlap
   | Intersects (Maybe TrgSeg) [TrgSeg]
   | TargetSwallowedBySource
       deriving (Eq, Ord, Show)
 
-{- Important axiom: a segment's slope must not be negative
+{- | Important axiom: a segment's slope must not be negative
 -}
--- ISSUE: We've left out one piece of information that
--- causes the code that uses this function to do too much
--- processing, including recalculating a target when it doesn't have to.
--- The problem is that we were counting on having the caller handle
--- all of the using the same approach.  That has turned out to not be
--- cleanly possible. Indeed the only responses here that can be handled
--- identically are the intersection responses; the 'no overlap' and the
--- 'source overlaps target' responses should be handled individully.
--- Make it cleanly top-down so that maintainers are not having to
--- work so hard wondering what's
--- going on.
--- Suggest reintroducing 3 sum types to break this up again:
--- 'OverLap', 'Intersects', and (I'll think of something better:)
--- 'TargetSwallowedBySource' .  The calling functions will thank us.
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg (s1, s2)) (TrgSeg (t1, t2))
   | s2 < t1 || t2 < s1 =                     -- no overlap

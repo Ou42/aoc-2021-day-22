@@ -29,8 +29,9 @@ mkAxisResults (Source ss) (Target ts) = zipWith compareSegments ss ts
 emptyRemnant :: Remnant
 emptyRemnant = []
 
-reduceRemnantUsingSource :: Remnant -> Source -> Remnant
-reduceRemnantUsingSource previousRemnant source =
+
+keepTargetsThatDoNotIntersectSource :: Remnant -> Source -> Remnant
+keepTargetsThatDoNotIntersectSource previousRemnant source =
    foldl prepareReduce emptyRemnant previousRemnant -- NOTE: each Source starts a new remnant
    where
       prepareReduce :: Remnant -> Target -> Remnant

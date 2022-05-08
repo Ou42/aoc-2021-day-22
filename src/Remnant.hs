@@ -17,7 +17,7 @@ import Segment ( AxisResult(..)
 -- ISSUE: 'Remnant' is not good enough name.  Should be called something
 --        akin to 'NonIntersectingCuboidsAccumulatingRepository'
 --        i.e. the acronym 'nicar'. Or I'd go with the more active
---        'RepositoryAccumulatingNonIntersectingCuboids' or 'ranic' which
+--        'RepositoryAccumulatingNonIntersectingCuboids' or 'Ranic' which
 --        is Polish for hurt, injure, lacerate, or wound.  Maintainers Beware!
 type Remnant = [ Target ]
 
@@ -29,7 +29,6 @@ mkAxisResults (Source ss) (Target ts) = zipWith compareSegments ss ts
 emptyRemnant :: Remnant
 emptyRemnant = []
 
-
 keepTargetsThatDoNotIntersectSource :: Remnant -> Source -> Remnant
 keepTargetsThatDoNotIntersectSource previousRemnant source =
    foldl prepareReduce emptyRemnant previousRemnant -- NOTE: each Source starts a new remnant
@@ -39,7 +38,7 @@ keepTargetsThatDoNotIntersectSource previousRemnant source =
          moveWhatsNotSourceIntoTheRemnant targetRemnant source target
 
 {- | If there are any adjacent targets resulting from decomposing
-   | the source against the current target, then add them to the
+   | the current target against the source, then add them to the
    | remnant
    |
    | Properties:

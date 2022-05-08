@@ -8,16 +8,12 @@ import Utils (readInt, toTuple)
 
 newtype Segment = Segment (Int, Int) deriving (Eq, Ord) -- fst <= snd
 
-{- How arguments to compareSegments are passed
+{- Make directly comparing a SrcSeg to a TrgSet impossible and vice-versa
 -}
-newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord)       -- fst <= snd
-newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst <= snd
+newtype SrcSeg = SrcSeg (Int, Int) deriving (Eq, Ord)       -- fst must be <= snd
+newtype TrgSeg = TrgSeg (Int, Int) deriving (Eq, Ord, Show) -- fst must be <= snd
 
 {- | The catagories of results from combining two Segments together
-   |
-   | We're calling it an AxisResult because a segment-pair comprises the
-   | decomposition of the dimension
-   | of one of the cuboid's sides.
 -}
 data AxisResult
   = NoOverlap
@@ -25,7 +21,7 @@ data AxisResult
   | TargetSwallowedBySource
       deriving (Eq, Ord, Show)
 
-{- | Important axiom: a segment's slope must not be negative
+{- | Axiom: a segment's slope must not be negative
 -}
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg (s1, s2)) (TrgSeg (t1, t2))

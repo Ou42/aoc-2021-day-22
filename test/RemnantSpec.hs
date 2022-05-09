@@ -3,13 +3,11 @@ module RemnantSpec where
 import Test.Hspec
 
 import Cuboid (Source(..), Target(..))
-import Remnant (Remnant, reduce)
+import Remnant (Remnant, moveWhatsNotSourceIntoTheRemnant)
 import Segment ( AxisResult(..)
                , Segment(..)
                , SrcSeg(..)
                , TrgSeg(..)
-               , AdjLeft(..)
-               , AdjRight(..)
                , compareSegments
                )
 
@@ -32,16 +30,16 @@ trgSegIntersects = TrgSeg (-15, 25)
 trgSeg30 = TrgSeg (-30, 30)
 
 remnantSpec =
-  describe "reduce" $ do
+  describe "moveWhatsNotSourceIntoTheRemnant" $ do
     it "source and target don't overlap" $ do
-      reduce
+      moveWhatsNotSourceIntoTheRemnant
           emptyRemnant
           source
           target
         `shouldBe`
           [target]
     it "source engulfs target completely" $ do
-      reduce
+      moveWhatsNotSourceIntoTheRemnant
           emptyRemnant
           source
           target2
@@ -49,6 +47,11 @@ remnantSpec =
           []
     context "Test compare where source and target intersect to generate adjacents" $ do
       it "the number of adjacent targets" $ do
-        length (reduce emptyRemnant (Source [srcSeg40, srcSeg18, srcSeg50]) (Target [trgSeg10, trgSegIntersects, trgSeg30]))
+        length
+          (moveWhatsNotSourceIntoTheRemnant
+            emptyRemnant
+            (Source [srcSeg40, srcSeg18, srcSeg50])
+            (Target [trgSeg10, trgSegIntersects, trgSeg30])
+          )
           `shouldBe`
             1

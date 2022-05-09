@@ -5,7 +5,7 @@ module RebootStep where
 import qualified Data.Text as T
 
 import Cuboid (Source, Target, convertFromSourceToTarget, parseSource)
-import Remnant (Remnant, reduceRemnantUsingSource)
+import Remnant (Remnant, keepTargetsThatDoNotIntersectSource)
 
 {- | The information parsed from each line in the Day-22 exercise input file
  -}
@@ -56,7 +56,7 @@ generateRemnant = foldl accumulateRemnantFromRebootStep []
 accumulateRemnantFromRebootStep :: Remnant -> RebootStep -> Remnant
 accumulateRemnantFromRebootStep incomingRemnant (RebootStep (rebootOperator, source)) =
    let
-      outgoingRemnant = reduceRemnantUsingSource incomingRemnant source
+      outgoingRemnant = keepTargetsThatDoNotIntersectSource incomingRemnant source
    in
       if rebootOperator == Augment
       then convertFromSourceToTarget source : outgoingRemnant

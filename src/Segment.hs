@@ -34,6 +34,20 @@ type AxisResult = (Maybe TrgSeg, [TrgSeg])
 
 {- Important axiom: a segment's slope must not be negative
 -}
+-- ISSUE: We've left out one piece of information that
+-- causes the code that uses this function to do too much
+-- processing, including recalculating a target when it doesn't have to.
+-- The problem is that we were counting on having the caller handle
+-- all of the using the same approach.  That has turned out to not be
+-- cleanly possible. Indeed the only responses here that can be handled
+-- identically are the intersection responses; the 'no overlap' and the
+-- 'source overlaps target' responses should be handled individully.
+-- Make it cleanly top-down so that maintainers are not having to
+-- work so hard wondering what's
+-- going on.
+-- Suggest reintroducing 3 sum types to break this up again:
+-- 'OverLap', 'Intersects', and (I'll think of something better:)
+-- 'TargetSwallowedBySource' .  The calling functions will thank us.
 compareSegments :: SrcSeg -> TrgSeg -> AxisResult
 compareSegments (SrcSeg (s1, s2)) (TrgSeg (t1, t2))
   | s2 < t1 || t2 < s1 =                 -- no overlap

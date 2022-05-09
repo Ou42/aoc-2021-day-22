@@ -13,6 +13,15 @@ truncateTarget :: Remnant -> Target -> Remnant
 truncateTarget outgoingRemnant target =
   let
     axisResults = mkAxisResults region50Source target
+
+    -- ISSUE: This is nuts!
+    -- 1. At best, this is a cutesy hack that should be
+    --    moved to be a mondule-direct function.
+    -- 2. But that begs the question of why we have to do this
+    --    hack anyways.
+    -- 3. Plus, the realization that this is duplicated in Remnant
+    --    is a smell.
+    -- So, this needs to be addressed.
     noOverlap   = (Nothing, [])
   in
     if noOverlap `elem` axisResults then
@@ -35,6 +44,8 @@ sourceTargetIntersection (target, axisOffset) axisResult@(Just overlap, _) =
          )
 
       {- | Return a torn-off piece of the original cuboid -}
+      -- ISSUE: Duplicated in Remnant.  Also, why can't we call this
+      -- something more accurate like 'createFragmentTarget'
       createPiece :: TrgSeg -> Target
       createPiece segment =
         let
